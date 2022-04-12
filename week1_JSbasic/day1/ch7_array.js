@@ -35,3 +35,5 @@ var userList = [
 for (var i=0; i<userList.length; i++) {
     console.log(`User No.${i+1}`, `Name: ${userList[i].name}`, `Age: ${userList[i].age}`)
 }
+
+// 템플릿 리터럴 : 백틱(``) 사이에 구성된 문자열에 ${}기호를 통하여 변수나 연산을 삽입할 수 있다.
