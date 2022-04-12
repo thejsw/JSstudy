@@ -33,5 +33,5 @@ var userList = [
 ];
 
 for (var i=0; i<userList.length; i++) {
-    console.log('User No.' + (i+1), '  Name: ' + userList[i].name, '  Age: ' + userList[i].age)
+    console.log(`User No.${i+1}`, `Name: ${userList[i].name}`, `Age: ${userList[i].age}`)
 }
