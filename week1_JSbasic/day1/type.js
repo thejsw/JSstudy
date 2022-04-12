@@ -9,30 +9,41 @@ console.log('Hello World'); //console.log
 
 // String (문자)
 var name = 'name';   // '' "" 둘 다 사용해도 괜찮음
-var space = '';    // 빈문자로 사용
+var space = '';      // 빈문자로 사용
+
 console.log( name );
 console.log( space );
+
+
 
 // Number (숫자)
 var num = 0;
 console.log(num);
+
+
 
 // Boolean (참, 거짓)
 var bool = true;
 var bool = false;
 console.log( bool );
 
+
+
 // undefined (변수의 자료형이 정의되지 않은 상태)
 var un;
 console.log( un );
 
+
+
 // null (값이 없음)
 var nu = null;
 console.log( nu );
+
+
 
 // typeof (자료형 확인)
 var num = 7;
 console.log(typeof num);
 
 var str = '7'
-console.log((num+str), typeof (num+str)); // 숫자와 문자를 더하면 문자가 된다.
+console.log((num+str), typeof (num+str));   // 숫자와 문자를 더하면 문자가 된다.
