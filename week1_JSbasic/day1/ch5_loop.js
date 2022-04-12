@@ -5,3 +5,11 @@
 for (var i=0; i<5; i++) {
     console.log(i);
 }
+
+
+// 1부터 5까지 더하는 반복문
+var num = 0;
+for (var i=0; i<5; i++) {
+    num += i
+}
+console.log(num);
