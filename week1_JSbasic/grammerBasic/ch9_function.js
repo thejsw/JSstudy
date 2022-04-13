@@ -58,13 +58,44 @@ console.log(result);
 // var input = confirm('확인하시겠습니까?');
 // alert(input);
 
-var fruits = ['apple', 'banana', 'orange', 'mango'];
+// var fruits = ['apple', 'banana', 'orange', 'mango'];
 
-function findFruits() {
-    var result = [];
-    for (var i in fruits) {
-        result.push(fruits[i].toUpperCase());
-    }
-    return result;
+// function findFruits() {
+//     var result = [];
+//     for (var i in fruits) {
+//         result.push(fruits[i].toUpperCase());
+//     }
+//     return result;
+// }
+// console.log(findFruits());
+
+
+
+// 콜백 callback
+// 다른 함수의 인자가 되는 함수
+function myCallback(data) {
+    console.log(data);
 }
-console.log(findFruits());
+myFunction(myCallback); // 인자가 없을 때
+
+function myFunction(arg) {
+    console.log('hello');
+    arg('world');
+}
+
+myFunction(function (data) {  // 인자가 있을 때
+    myCallback(data)
+});
+
+function 함수10(cb) {
+    console.log('hello');
+    cb();
+}
+
+function 콜백1(data) {
+    console.log(data);
+}
+
+함수10(function () { // 인자가 잇을 때2
+    콜백1(2)
+})
