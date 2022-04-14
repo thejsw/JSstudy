@@ -26,12 +26,21 @@ btn.addEventListener('click', function() {
 })
 
 function myFunction() {
-    document.querySelector('button').style.width = '200px';
-    document.querySelector('button').style.height = '50px';
-    document.querySelector('button').style.padding = '10px';
-    document.querySelector('button').style.border = '1px solid #ddd';
-    document.querySelector('button').style.borderRadius = '10px';
-    document.querySelector('button').style.backgroundColor = '#000';
-    document.querySelector('button').style.color = '#ddd';
-    document.querySelector('button').style.fontSize = '28px';
+
+}
+
+function myFunction(el) {
+    if (el.style.color == '') {
+        document.querySelector('button').style.width = '200px';
+        document.querySelector('button').style.height = '50px';
+        document.querySelector('button').style.padding = '10px';
+        document.querySelector('button').style.border = '1px solid #ddd';
+        document.querySelector('button').style.borderRadius = '10px';
+        document.querySelector('button').style.backgroundColor = '#000';
+        document.querySelector('button').style.color = '#ddd';
+        document.querySelector('button').style.fontSize = '28px';
+    }
+    else {
+        el.style.color = ''
+    }
 }
