@@ -11,6 +11,8 @@ function toggleStar(data) {
     }
 }
 
+
+
 // setTimeout(callback, seconds)를 이용해서 몇 초 후에 loader를 사라지게 하기
 setTimeout(function () {
     document.getElementById('loader').style.display = 'none';
