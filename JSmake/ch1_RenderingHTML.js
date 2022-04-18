@@ -42,16 +42,22 @@ for (car of CarList) {
 document.body.appendChild(ul);
 
 
+// 객체를 테이블 형태로 렌더링하기
+var CarList = [
+    { name : 'Car1', design : 6, cost : 1},
+    { name : 'Car2', design : 8, cost : 2},
+    { name : 'Car3', design : 9, cost : 3},
+    { name : 'Car4', design : 7, cost : 4},
+]
+var table = document.querySelector('table');   // querySelector를 이용해서 table에 접근하기
+
 for (car of CarList) {
-    var tr = document.createElement('tr');
-    var td = document.createElement('td');
-    td.innerHTML = `|| ${car.name} |`;
-    tr.appendChild(td);
-    var td = document.createElement('td');
-    td.innerHTML = `| ${car.design} |`;
-    tr.appendChild(td);
-    var td = document.createElement('td');
-    td.innerHTML = `| ${car.cost} ||`;
-    tr.appendChild(td);
-    document.body.appendChild(tr);
+    var tr = document.createElement('tr');     // createElement를 이용해서 tr 만들기
+    tr.innerHTML =                             // innerHTML을 이용해서 td 리스트 만들기
+    `
+    <td>${car.name}</td>
+    <td>${car.design}</td>
+    <td>${car.cost}</td>
+    `;
+    table.appendChild(tr);                     // qppendChild를 이용해서 table에 tr 리스트 추가하기
 }
