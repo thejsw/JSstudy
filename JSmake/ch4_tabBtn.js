@@ -7,8 +7,12 @@ tabBtns.forEach(function(tabBtn, index) {
         for (content of contents) {
             content.style.display = 'none';
         }
+        for (tabBtn of tabBtns) {
+            tabBtn.style.backgroundColor = '#FFF';
+        }
 
         // click 시에 display block으로 변환
         contents[index].style.display = 'block';
+        tabBtns[index].style.backgroundColor = '#ddd';
     })
 })
