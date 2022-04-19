@@ -3,14 +3,12 @@ let contents = document.querySelectorAll('.contents');
 
 tabBtns.forEach(function(tabBtn, index) {
     tabBtn.addEventListener('click', function() {
-        for (let i=0; i<3; i++) {
-            contents[i].style.display = 'none';
+        // display 초기화를 위한 for문
+        for (content of contents) {
+            content.style.display = 'none';
         }
-        if (contents[index].style.display === 'block') {
-            contents[index].style.display = 'none';
-        }
-        else {
-            contents[index].style.display = 'block';
-        }
+
+        // click 시에 display block으로 변환
+        contents[index].style.display = 'block';
     })
 })
