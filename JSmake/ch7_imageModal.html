@@ -1,0 +1,82 @@
+<style>
+    .img-container1 {
+        width: 100px;
+    }
+
+    img {
+        width: 200px;
+        z-index: 1;
+    }
+    .layer {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: none;
+        z-index: 0;
+    }
+
+    .x {
+        display: none;
+        z-index: 2;
+    }
+
+    .active {
+        position: fixed;
+        top: 25%;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 250px;
+        height: 250px;
+        z-index: 2;
+    }
+    .show {
+        display: block;
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .xOut {
+        display: block;
+    }
+</style> 
+<body>
+    <div >
+        <img class="img-container1" src="img/pm-icon--check.png" alt="">
+        <div class="x"><button>x</button></div>
+    </div>
+    <div class="img-container2">
+        <img src="img/pm-icon--W.png" alt="">
+    </div>
+    <div class="img-container3">
+        <img src="img/pm-icon--watch.png" alt="">
+    </div>
+    <div class="layer"></div>
+
+    <script>
+        var img1 = document.querySelector('.img-container1');
+        var img2 = document.querySelector('.img-container2');
+        var img3 = document.querySelector('.img-container3');
+        var layer = document.querySelector('.layer');
+        var xBtn = document.querySelector('.x');
+
+        img1.addEventListener('click', function() {
+            img1.classList.add('active')
+            layer.classList.add('show')
+            xBtn.classList.add('xOut')
+        })
+        layer.addEventListener('click', function() {
+            img1.classList.remove('active')
+            layer.classList.remove('show')
+            xBtn.classList.remove('xOut')
+        })
+        img2.addEventListener('click', function() {
+            img2.classList.toggle('active')
+            layer.classList.toggle('show')
+        })
+        img3.addEventListener('click', function() {
+            img3.classList.toggle('active')
+            layer.classList.toggle('show')
+        })
+    </script>
+</body>
