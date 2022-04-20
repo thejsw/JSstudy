@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<head>
+</head>
+<style>
+    body {
+    margin: 0px;
+    padding: 0px;
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: 40px;
+    background-color: #000;
+    color: #fff;
+}
+
+section {
+    position: fixed;
+    top: 40px;
+    left: -200px;
+    width: 200px;
+    height: 100%;
+    background-color: #000;
+    color: #fff;
+}
+
+.active {
+    left: 0px!important;
+    transition: 0.5s;
+}
+</style>
+
+<body>
+    <nav>
+        <div>
+            <button class="dropBtn" id="dropBtn">=</button>
+        </div>
+        <div>
+            <span>apple</span>
+        </div>
+        <div>
+            <span>bag</span>
+        </div>
+    </nav>
+
+    <section id="drop">
+        <div class="container">
+            <ul class="dropcontents"  >
+                <li class="dropitems">스토어</li>
+                <li class="dropitems">MAC</li>
+                <li class="dropitems">iPad</li>
+                <li class="dropitems">iPhone</li>
+            </ul>
+        </div>
+    </section>
+
+
+    <script>
+        var dropBtn = document.getElementById('dropBtn');
+        var dropcontents = document.getElementById('drop');
+
+        dropBtn.addEventListener('click', function() {
+            
+            
+            dropcontents.classList.toggle('active');
+        })
+    </script>
+</body>
+</html>
