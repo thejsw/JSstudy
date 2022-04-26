@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="layout.css">
     <script src="https://kit.fontawesome.com/bee4313118.js" crossorigin="anonymous"></script>
 </head>
-<body>
+<body sytle="min-height: 10000;">
     <!-- Nav -->
     <nav class="navbar fixed-top bg-black">
         <span class="absolute top-right padding--10 pointer only-mobile color-white" onclick="">
@@ -23,31 +23,72 @@
     </nav>
 
     <!-- Main Image -->
-    <section class="slide-item relative">
-        <img src="img/LAtour.jpg" alt="">
-        <div class="bg-text color-white">
-            <h2>Los Angeles</h2>
-            <p>Thank you, Los Angeles - A night we won't forget.</p>
+    <div class="row">
+        <div class="slide-container relative">
+            <section class="slide-item relative">
+                <img src="img/LAtour.jpg" alt="">
+                <div class="absolute middle bg-text color-white">
+                    <h2>Los Angeles</h2>
+                    <p>Thank you, Los Angeles - A night we won't forget.</p>
+                </div>
+            </section>
+            <!-- <section class="slide-item relative">
+                <img src="img/NYtour.jpg" alt="">
+                <div class="bg-text color-white">
+                    <h2>New York</h2>
+                    <p>Thank you, NY - A night we won't forget.</p>
+                </div>
+            </section>
+            <section class="slide-item relative">
+                <img src="img/Chicagotour.jpg" alt="">
+                <div class="bg-text color-white">
+                    <h2>Chicago</h2>
+                    <p>Thank you, Chicago - A night we won't forget.</p>
+                </div>
+            </section> -->
+            <section class="indicator">
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+            </section>
         </div>
-    </section>
-    <section class="slide-item relative">
-        <img src="img/NYtour.jpg" alt="">
-        <div class="bg-text color-white">
-            <h2>New York</h2>
-            <p>Thank you, NY - A night we won't forget.</p>
+    </div>
+    
+        <div class="row pd-tb--48">
+            <div class="width-800">
+                <div class=""></div>
+            </div>
         </div>
-    </section>
-    <section class="slide-item relative">
-        <img src="img/Chicagotour.jpg" alt="">
-        <div class="bg-text color-white">
-            <h2>Chicago</h2>
-            <p>Thank you, Chicago - A night we won't forget.</p>
+
+    <!-- Tour Dates -->
+    <section class="">
+        <div class="Title">
+            <h1 class="">Tour Dates</h1>
+            <p class="">Lorem ipsum, dolor sit amet consectetur adipisicing.</p>
         </div>
-    </section>
-    <section class="indicator">
-        <span class="dot"></span>
-        <span class="dot"></span>
-        <span class="dot"></span>
+        <div class="Dates">
+            <div class="September">September</div>
+            <div class="October">October</div>
+            <div class="November">November</div>
+        </div>
+        <div class="Tickets">
+            <div class="ParisTickets">
+                <img src="" alt="">
+                <h4 class="h4">Paris</h4>
+                <p class="">Friday 27 November 2024</p>
+            </div>
+            <div class="NYTickets">
+                <img src="" alt="">
+                <h4 class="h4">New York</h4>
+                <p class="">Saturday 28 November 2024</p>
+            </div>
+            <div class="GSTickets">
+                <img src="" alt="">
+                <h4 class="h4">Golden State</h4>
+                <p class="">Monday 30 November 2024</p>
+            </div>
+        </div>
     </section>
 </body>
+<script src="main.js"></script>
 </html>

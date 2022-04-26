@@ -34,6 +34,8 @@ input[type="text"] {
 .relative { position: relative; }
 .absolute { position: absolute; }
 .top-right { top: 0; right: 0; }
+.bottom-middle { bottom: 0; text-align: center; }
+.middle { top: 0; right: 0; transform: translateX(-50%);}
 
 /* 넓이, 높이 */
 .width-100 { width: 100%; }
@@ -94,12 +96,14 @@ input[type="text"] {
     left: 50%;
     transform: translateX(-50%);
 }
-.indicator .dot {
+.dot {
     display: inline-block;
     width: 10px;
     margin: 0px 20px;
-    border-radius: 50%;
+    border-radius: 50% solid #ddd;
     background-color: #ddd;
+    color: #ddd;
+    
 }
 
 
