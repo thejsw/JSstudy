@@ -1,3 +1,17 @@
+let json = '{"key": "value"}'
+localStorage.setItem('json', json);
+let car = '{"name": "zenesis"}'
+localStorage.setItem('car', car);
+
+
+// object를 json 포맷으로 바꾸기
+let person = { name : '조성원' };
+let result = JSON.stringify(person);
+
+console.log(typeof result);
+console.log(result);
+
+
 ///// json
 // javaScript object notation
 // 데이터를 저장하거나 접속할 때 사용하는 경량의 data 교환 형식
@@ -21,4 +35,3 @@
 // (HTML을 근본으로 했기에 태그라는 것이 없을 수가 없는데, 그 태그를 줄인다 해도 최소한 표현하려면 양쪽에 몇글자씩이 있어야 한다.)
 // JSON
 // 태그로 표현하기 보다는 중괄호({}) 같은 형식으로 하고, 값을 ','로 나열하기에 그 표현이 간단하다.
-
