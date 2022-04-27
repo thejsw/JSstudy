@@ -6,6 +6,9 @@ count.innerHTML = num;
 
 btn.addEventListener('click', () => {
     num++;
+
+    localStorage.setItem('count', num);
+
     count.innerHTML = num;
 })
 
