@@ -5,11 +5,20 @@ localStorage.setItem('car', car);
 
 
 // object를 json 포맷으로 바꾸기
-let person = { name : '조성원' };
-let result = JSON.stringify(person);
+let personJavaScript = { name : '조성원' };
+let resultJS = JSON.stringify(personJavaScript);
 
-console.log(typeof result);
-console.log(result);
+console.log(typeof resultJS);
+console.log(resultJS);
+
+
+// json을 자바스크립트 객체로 바꾸기
+let personJson = '{ "name" : "조성원" }';
+let resultJson = JSON.parse(personJson);
+
+console.log(typeof resultJson);
+console.log(resultJson);
+
 
 
 ///// json
