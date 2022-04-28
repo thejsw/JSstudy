@@ -114,6 +114,13 @@ let listmore = [...list, ...more];
 console.log(list이게안되네요)
 console.log(listmore)
 
+//// 배열 자르기
+let listslice = listmore.slice(0, 1);
+let listsplice = listmore.splice(1, 2, 'a', 'b', 'c');
+console.log(listslice);
+console.log(listsplice);
+
+
 //// 전개 연산자를 통한 객체 합치기
 let carinfo1 = {
     brand: '메르세데스',
@@ -131,6 +138,50 @@ console.log(carinfo합치기)
 
 
 
+
+
+
+// try catch 문
+//// setTimeout와 같이 비동기적으로 실행되는 코드의 에러는 잡아낼 수 없다.
+try {
+    console.log("아직 에러 없음");
+    throw "예외 처리를 던짐"; // 이후 문장이 실행이 안되는 모습
+    a; // 에러 시작
+    console.log("이곳은 실행 안됨");
+
+  } catch (err) {
+    console.log(err); // a is not defined
+    console.log("에러가 나도 이곳의 코드는 실행됨");
+  
+  } finally {
+    console.log("항상 실행");
+  }
+
+
+
+
+
+
+
+//   https://sdcodebase.tistory.com/22
+//   자바스크립트와 타언어의 차이 - class와 prototype에 대하여
+
+//   https://www.huskyhoochu.com/what-is-this-exactly-in-javascript/
+//   파이썬 self와 자바스크립트 this의 차이
+
+// __proto__
+let apple = 'apple';
+console.log(apple.__proto__);
+console.log(apple.toUpperCase());
+
+// 직접 인스턴스 만들기
+let appleNew = new String("banana");
+console.log(appleNew);
+
+// class
+class User {
+    
+}
 
 
 
