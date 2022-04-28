@@ -57,6 +57,7 @@ let car = 'car';
 car && console.log(car);
 //// 값이 있으면 true 출력, null이거나 undefined일 경우 
 // 삼항연산자
+let age = 20;
 let person = age > 18 ? 'adult' : 'kids';
 //// 조건에 맞으면 왼쪽, 맞지 않으면 오른쪽 값을 반환
 
@@ -67,7 +68,36 @@ let person = age > 18 ? 'adult' : 'kids';
 
 
 
-// 구조화 destructing
+// 인덱스를 통한 자료 접근
+let cars = ['car1', 'car2', 'car3'];
+let car1 = cars[0];
+let car2 = cars[1];
+let car3 = cars[2];
+
+// 구조화를 통한 자료 접근
+let [car10, car20, car30] = cars
+console.log(car10);
+console.log(car20);
+console.log(car30);
+
+
+// 구조화를 통한 계산기 만들기
+let 계산기 = (a, b) => {
+    let 더하기 = a + b;
+    let 빼기 = a - b;
+    let 곱하기 = a * b;
+    let 나누기 = a / b;
+    return [더하기, 빼기, 곱하기, 나누기]
+}
+
+let [더하기, 빼기, 곱하기, 나누기] = 계산기(8, 4);
+console.log(더하기);
+console.log(빼기);
+console.log(곱하기);
+console.log(나누기);
+
+
+
 
 // spread operator
 
