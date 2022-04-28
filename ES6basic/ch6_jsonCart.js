@@ -41,7 +41,7 @@ function addToCart(id) {
       // 상품 목록중에 인자로 넘어온 id와 일치하는 상품을 장바구니에 추가
       DATA.forEach(function (data) {
         if (data.id === id) {
-          cart.push({ id: data.id, q: 1 })
+          cart.push({ id: data.id, name: data.name, q: 1 })
         }
       })
     }
