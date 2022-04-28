@@ -99,7 +99,41 @@ console.log(나누기);
 
 
 
-// spread operator
+
+
+
+
+
+
+// 전개 연산자
+//// 전개 연산자를 통한 배열 합치기
+let list = ['one', 'two', 'three'];
+let more = ['four'];
+let list이게안되네요 = list + more;
+let listmore = [...list, ...more];
+console.log(list이게안되네요)
+console.log(listmore)
+
+//// 전개 연산자를 통한 객체 합치기
+let carinfo1 = {
+    brand: '메르세데스',
+    model: 'amg',
+}
+let carinfo2 = { 
+    color: 'grey',
+    cost: 50000,
+}
+let carinfo합치기 = {...carinfo1, ...carinfo2}
+console.log(carinfo합치기)
+
+
+
+
+
+
+
+
+
 
 // tarnary
 
