@@ -5,8 +5,8 @@ let data = [
     { id:4, name: "모자", cost:10 },
 ];
 
-
 let ul = document.createElement("ul");
+
 data.map(item => {
     let li = document.createElement("li");
     li.innerHTML = `${item.name}, ${item.cost} <button onclick="addtoCart(${item.id})">장바구니에 추가</button>`; 
@@ -15,10 +15,15 @@ data.map(item => {
 
 document.getElementById('root').appendChild(ul);
 
+
+
 function addtoCart(id) {
+    console.log(id);
+
     if (localStorage.getItem('cart') === null) {
         localStorage.setItem('cart', '[]');
     }
+
     let cart = JSON.parse(localStorage.getItem('cart'));
     // 장바구니에 이미 상품이 있는지 체크
     let isCart = false;
@@ -31,9 +36,9 @@ function addtoCart(id) {
     })
 
     if (isCart === false) {
-        data.forEach(function (item) {
-            if (item.id === id) {
-                cart.push({id: data.id, q: 1});
+        data.forEach(function (data) {
+            if (data.id === id) {
+                cart.push({ id: data.id, q: 1});
             }
         })
     }
