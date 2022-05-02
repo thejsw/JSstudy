@@ -229,6 +229,33 @@ fourth()
 
 
 
+
+
+// Callback 에러 핸들링
+function fetchData(cb) {
+    setTimeout(() => {
+        const user = { username: 'jo'}
+        const error = { message: 'user not found'}
+        cb(null, user)   // 정상적인 작동
+        // cb(error, null)  // 에러 발생
+    })
+}
+
+fetchData((err, data) => {
+    // 에러가 넘어올 시, 에러메세지를 반환하는 콜백 함수
+    if (err) {
+        return console.error(err)
+    }
+    // 에러가 넘어오지 않고, 데이터가 정상적으로 넘어온다면, 데이터를 반환
+    console.log(data)
+})
+
+
+
+
+
+
+
 // tarnary
 
 // promise
