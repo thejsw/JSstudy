@@ -256,6 +256,39 @@ fetchData((err, data) => {
 
 
 
+
+
+// Promise
+const PromiseData = new Promise((res, rej) => {
+    setTimeout(() => {
+        const user = { username: 'jo' }
+        const error = { message: 'user not found' }
+        // rej(error)
+        res(user)
+    })
+})
+
+PromiseData.then(
+    res => console.log(res),
+    rej => console.error(rej)
+    )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // tarnary
 
 // promise
