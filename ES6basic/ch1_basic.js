@@ -218,10 +218,18 @@ let fourth = () => {
     }, 500)
 }
 
-first()
-second()
-third()
-fourth()
+// first()
+// second()
+// third()
+// fourth()
+
+async function run() {
+    await first()
+    await second()
+    await third()
+    fourth()
+}
+run()
 
 
 
@@ -274,14 +282,58 @@ PromiseData.then(
     )
 
 
+    function firstPromise() {
+        return new Promise(res => {
+            setTimeout(() => {
+                console.log(1)
+            }, 400)
+        })
+    }
+    function secondPromise() {
+        return new Promise(res => {
+            setTimeout(() => {
+                console.log(2)
+            }, 300)
+        })
+    }
+    function thirdPromise() {
+        return new Promise(res => {
+            setTimeout(() => {
+                console.log(3)
+            }, 200)
+        })
+    }
+    function fourthPromise() {
+        return new Promise(res => {
+            setTimeout(() => {
+                console.log(4)
+            }, 500)
+        })
+    }
+    
+    // first().then(second()).then(third()).then(fouth())
 
 
 
 
 
 
+// async / await
+// 비동기 함수를 동기적으로 실행한다
+const asyncData = new Promise((res, rej) => {
+    setTimeout(() => {
+        const user = { username: 'jo' }
+        const error = { message: 'user not found' }
+        // rej(error)
+        res(user)
+    })
+})
 
-
+asyncf()
+async function asyncf() {
+    const data = await asyncData  // await은 비동기함수를 로드할 때까지 기다린다는 의미, async 안에서만 동작
+    console.log(data)
+}
 
 
 
