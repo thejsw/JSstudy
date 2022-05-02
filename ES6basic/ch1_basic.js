@@ -267,6 +267,7 @@ fetchData((err, data) => {
 
 
 // Promise
+// 콜백 지옥에서 벗어나 코드 가독성을 위해서
 const PromiseData = new Promise((res, rej) => {
     setTimeout(() => {
         const user = { username: 'jo' }
@@ -341,12 +342,9 @@ async function asyncf() {
 
 
 
-// tarnary
-
-// promise
-
-
 // 데이터 저장 및 전송 : cookie, localStorage, json
 // 로그인, 장바구니
 
 
+// 궁금증 1. 콜백에서 프로미스로 넘어가는 배경? > 코드의 간략화 때문인가? - 코드의 가독성
+// 궁금증 2. 프로미스에서 async/await로 넘어가는 배경? > 굳이 비동기함수를 동기적으로 처리할 필요가 있는가? - 상황에 따라
