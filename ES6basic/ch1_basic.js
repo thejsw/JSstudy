@@ -121,7 +121,7 @@ console.log(listslice);
 console.log(listsplice);
 
 
-//// 전개 연산자를 통한 객체 합치기
+//// 전개 연산자(...)를 통한 객체 합치기
 let carinfo1 = {
     brand: '메르세데스',
     model: 'amg',
@@ -182,6 +182,49 @@ console.log(appleNew);
 class User {
     
 }
+
+
+
+
+
+
+
+
+
+// 비동기와 동기 (Async, Sync)
+//// 동기 : 순서대로 실행된다
+//// 비동기 : 빠른 것부터 실행된다 > 오래 걸리는 작업을 건너뜀 (ex. 이미지 렌더링)
+
+// 대표적인 비동기 함수 : setTimeout (타이머)
+// setTimeout(callback, seconds) : 몇 초 뒤에 callback 함수 실행
+let first = () => {
+    setTimeout(() => {
+        console.log(1)
+    }, 400)
+}
+let second = () => {
+    setTimeout(() => {
+        console.log(2)
+    }, 300)
+}
+let third = () => {
+    setTimeout(() => {
+        console.log(3)
+    }, 200)
+}
+let fourth = () => {
+    setTimeout(() => {
+        console.log(4)
+    }, 500)
+}
+
+first()
+second()
+third()
+fourth()
+
+
+
 
 
 
