@@ -51,9 +51,39 @@ router.get('/p/:postId', function(req, res, next) {
 
 
 
+// Update
+router.get('/p/:postId/update', function(req, res, next) {
+  fs.readFile(`data/${req.params.postId}`, (err, content) => {
+    if (err) {
+      return console.error(err)
+    }
+    const post = { title: req.params.postId, content}
+    res.render('blog_form', { title: 'Update form', post })
+  })
+})
+
+router.post('/p/:postId/update', function(req, res, next) {
+  console.log(req.body)
+  // fs.rename(이전제목,새로운제목,callback)
+  fs.rename(`data/${req.body.ex_title}`, `data/${req.body.title}.txt`, (err,content) => {
+    if (err) {
+      return console.error(err)
+    }
+  // fs.writeFile(파일제목,파일내용,callback)
+  fs.writeFile(`data/${req.body.title}`, req.body.content, (err,content) => {
+    if (err) {
+      return console.error(err)
+    }
+    res.redirect(`/p/${req.body.title}.txt`)
+  })
+})
+})
+
+
+
 
 // Delete
-router.post('/p/:postId', function(req, res, next) {
+router.post('/p/:postId/delete', function(req, res, next) {
   console.log(req.params.postId)
   // fs.unlink(삭제할파일, callback)
   fs.unlink(`data/${req.params.postId}`, (err) => {

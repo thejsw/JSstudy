@@ -3,14 +3,26 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
-  p about #{title}
+    h1= title
+    p Welcome to #{title}
+    p about #{title}
 
-  form(action="/create" method="post")
-    div.form-group
-        input(type="text" name="title" placeholder="title" required)
-    div.form-group
-        textarea(name="content" cols="30" rows="10" placeholder="content")
-    div.form-group
-        button Submit
+    if !post
+        form(action="/create" method="post")
+            div.form-group
+                input(type="text" name="title" placeholder="title" required)
+            div.form-group
+                textarea(name="content" cols="30" rows="10" placeholder="content")
+            div.form-group
+                button Submit
+    else
+        form(action=`/p/${post.title}/update` method="post")
+            div.form-group
+                input(type="text" name="ex_title" value=post.title readonly)
+            div.form-group
+                input(type="text" name="title" placeholder="제목을 수정하세요" required)
+            div.form-group
+                textarea(name="content" cols="30" rows="10" placeholder="content")= post.content
+            div.form-group
+                button Submit
+
