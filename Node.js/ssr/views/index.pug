@@ -8,3 +8,8 @@ block content
   p about #{title}
 
   a(href="/create") New Post 
+
+  ul
+    each post in posts
+      li
+        a(href=`/p/${post}`)= post.split('.')[0]
