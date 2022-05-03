@@ -20,9 +20,10 @@ router.get('/create', function(req, res, next) {
 // 새로운 파일을 만듦
 // fs.appendFile(파일이름, 파일내용, callback)
 router.post('/create', function(req, res, next) {
-  fs.appendFile(`data/${req.body.title}.txt`, req.body.content, (err) => {
+  // return console.log(req.body)
+  fs.appendFile(`./data/${req.body.title}.txt`, req.body.content, (err) => {
     if (err) {
-      return console.log(err);
+      return console.error(err);
     }
     res.redirect('/');
   })
