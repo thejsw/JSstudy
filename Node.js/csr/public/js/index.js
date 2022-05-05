@@ -10,3 +10,13 @@ document.body.addEventListener('click', e => {
         history.pushState(null, null, url);
     }
 })
+
+function router() {
+    const routes = [
+        { path: '/', view: () => console.log('Home')},
+        { path: '/about', view: () => console.log('About')},
+        { path: '/posts', view: () => console.log('Posts')}
+    ]
+
+    console.log(location.pathname)
+}
