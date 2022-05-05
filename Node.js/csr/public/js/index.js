@@ -6,5 +6,7 @@ document.body.addEventListener('click', e => {
         const url = e.target.getAttribute('href')
     
         console.log(url)
+        // history.pushState(null, null, url) : 주소창의 사용자 로그기록 변경
+        history.pushState(null, null, url);
     }
 })
