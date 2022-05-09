@@ -21,19 +21,17 @@ function router() {
     console.log(location.pathname)
 }
 
-function Posts() {
     const element = {
         type: 'ul',
         props: {},
         children: [
-            { type: 'li', props: {}, children: ['item'] },
-            { type: 'li', props: {}, children: ['item'] },
-            { type: 'li', props: {}, children: ['item'] },
-            { type: 'li', props: {}, children: ['item'] },
+            { type: 'li', props: { class: 'title' }, children: ['item1'] },
+            { type: 'li', props: { class: 'MainContents' }, children: ['item2'] },
+            { type: 'li', props: { class: 'SubContents' }, children: ['item3'] },
+            { type: 'li', props: { class: 'footer' }, children: ['item4'] },
         ]
     }
     document.getElementById('root').replaceChildren(createElement(element))   // replaceChilderen
-}
 
 function createElement(node) {
     if (typeof node === 'string') {
@@ -44,19 +42,54 @@ function createElement(node) {
 
     Object.keys(node.props).map(prop => {   // array.map(callback): array의 length만큼 callback 반복
         if (prop.match(/^en/)) {    // props.match(/^en/) - 정규표현식: e로 시작하는 문자열 찾기
-            $el.addEventListener(prop.slice(2).toLocaleLowerCase(), node.props(prop))
-        } else if (typeof node.props(prop) === 'boolean') {
-            if (node.props(prop)) {
+            $el.addEventListener(prop.slice(2).toLocaleLowerCase(), node.props[prop])
+        } else if (typeof node.props[prop] === 'boolean') {
+            if (node.props[prop]) {
                 $el.setAttribute(prop, '')
             }
         } else {
-            $el.setAttribute(prop, node.props(prop))
+            $el.setAttribute(prop, node.props[prop])
         }
     })
 
-    node.children.map(c => {
-        $el.appendChild(createElement(c))
+    node.children.map(children => {
+        $el.appendChild(createElement(children))
     })
 
     return $el;
 }
+
+console.log(createElement(element))
+
+
+// React Component
+function Home() { 
+    return {
+        type: 'div',
+        props: {}, 
+        children: [
+            { type: 'h1', props: {}, children: ['Home']},
+            { type: 'p', props: {}, children: ['Welcome to Home']}
+        ]
+    }
+}
+
+
+const layout = {
+    type: 'div',
+    props: { 'class': 'nav' },
+    children: [
+        { type: 'ul', props: {}, children: [
+            { type: 'li', props: {}, children: [{ type: 'a', props: { 'href': '/', 'class': 'nav__link', 'data-link': '' }, children: ['Home']}
+            ]},
+            { type: 'li', props: {}, children: [{ type: 'a', props: { 'href': '/', 'class': 'nav__link', 'data-link': '' }, children: ['Home']}
+            ]},
+            { type: 'li', props: {}, children: [{ type: 'a', props: { 'href': '/', 'class': 'nav__link', 'data-link': '' }, children: ['Home']}
+            ]},
+        ]},
+        element
+    ]
+}
+
+document.getElementById('root').replaceChildren
+    createElement(layout);
