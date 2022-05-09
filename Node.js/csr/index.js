@@ -8,6 +8,12 @@ const port = 3000;
 // express에서 정적 파일 제공
 app.use('/static/', express.static(path.resolve(__dirname, 'public')));
 
+// Posts
+app.get('/posts', (req, res) => {
+    const cars = ['제네시스', '스타리아', '아이오닉', '캐스퍼'];
+    res.json(cars);
+})
+
 // 라우팅
 app.get('/*', (req, res) => {
     res.sendFile(path.resolve(__dirname, 'public', 'index.html'));
