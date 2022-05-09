@@ -11,15 +11,15 @@ document.body.addEventListener('click', e => {
     }
 })
 
-function router() {
-    const routes = [
-        { path: '/', view: () => console.log('Home')},
-        { path: '/about', view: () => console.log('About')},
-        { path: '/posts', view: () => console.log('Posts')}
-    ]
+// function router() {
+//     const routes = [
+//         { path: '/', view: () => console.log('Home')},
+//         { path: '/about', view: () => console.log('About')},
+//         { path: '/posts', view: () => console.log('Posts')}
+//     ]
 
-    console.log(location.pathname)
-}
+//     console.log(location.pathname)
+// }
 
     const element = {
         type: 'ul',
@@ -72,6 +72,23 @@ function Home() {
             { type: 'p', props: {}, children: ['Welcome to Home']}
         ]
     }
+}
+
+// posts를 누를 시 클라이언트 서버를 통해 데이터를 요청받음
+function Posts() {
+    fetch('http://localhost:3000/posts', {
+        method: 'POST',
+    })
+    .then(res => res.json())
+    .then(result => console.log(result))
+}
+
+function router() {
+    const routes = [
+        { path: '/', view: () => Home({ username: 'bunny'}) },
+        { path: '/posts', view: Posts },
+        { path: '/contact', view: Contact },
+    ]
 }
 
 
