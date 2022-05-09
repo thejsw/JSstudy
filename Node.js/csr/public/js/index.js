@@ -20,3 +20,43 @@ function router() {
 
     console.log(location.pathname)
 }
+
+function Posts() {
+    const element = {
+        type: 'ul',
+        props: {},
+        children: [
+            { type: 'li', props: {}, children: ['item'] },
+            { type: 'li', props: {}, children: ['item'] },
+            { type: 'li', props: {}, children: ['item'] },
+            { type: 'li', props: {}, children: ['item'] },
+        ]
+    }
+    document.getElementById('root').replaceChildren(createElement(element))   // replaceChilderen
+}
+
+function createElement(node) {
+    if (typeof node === 'string') {
+        return document.createTextNode(node)   // createTextNode(String): text node를 만듦
+    }
+
+    const $el = document.createElement(node.type)
+
+    Object.keys(node.props).map(prop => {   // array.map(callback): array의 length만큼 callback 반복
+        if (prop.match(/^en/)) {    // props.match(/^en/) - 정규표현식: e로 시작하는 문자열 찾기
+            $el.addEventListener(prop.slice(2).toLocaleLowerCase(), node.props(prop))
+        } else if (typeof node.props(prop) === 'boolean') {
+            if (node.props(prop)) {
+                $el.setAttribute(prop, '')
+            }
+        } else {
+            $el.setAttribute(prop, node.props(prop))
+        }
+    })
+
+    node.children.map(c => {
+        $el.appendChild(createElement(c))
+    })
+
+    return $el;
+}
