@@ -9,10 +9,10 @@ const port = 3000;
 app.use('/static/', express.static(path.resolve(__dirname, 'public')));
 
 // Posts
-app.get('/posts', (req, res) => {
-    const cars = ['제네시스', '스타리아', '아이오닉', '캐스퍼'];
-    res.json(cars);
-})
+// app.get('/posts', (req, res) => {
+//     const cars = ['제네시스', '스타리아', '아이오닉', '캐스퍼'];
+//     res.json(cars);
+// })
 
 // 라우팅
 app.get('/*', (req, res) => {

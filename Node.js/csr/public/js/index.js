@@ -75,12 +75,33 @@ function Home() {
 }
 
 // posts를 누를 시 클라이언트 서버를 통해 데이터를 요청받음
-function Posts() {
-    fetch('http://localhost:3000/posts', {
-        method: 'POST',
+async function Posts() {
+    // fetch('http://localhost:3000/posts', {
+    //     method: 'POST',
+    // })
+    // .then(res => res.json())
+    // .then(result => console.log(result))
+
+    // fetch(url, option)
+
+
+    // fetch함수가 비동기적으로 실행되기 때문에, return 이후에 실행 > 정상적인 작동이 되지않음
+    // async, await을 통해 동기적으로 실행해줘야함
+    let result = await fetch("https://dapi.kakao.com/v2/search/image/query=제네시스", {
+        method: 'GET',
+        headers: { 'Authorization': 'KakaoAK 777dc9bb3a303389c0395fe804deff74' }
     })
     .then(res => res.json())
     .then(result => console.log(result))
+
+    return {
+        type: 'div',
+        props: {}, 
+        children: [
+            { type: 'h1', props: {}, children: ['Posts']}
+            { type: 'p', props: {}, children: ['Posts']}
+        ]
+    }
 }
 
 function router() {
