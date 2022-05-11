@@ -9,6 +9,7 @@ import ReactDOM from 'react-dom/client';
 //   return <h1>Hello World</h1>
 // }
 
+
 ////// 출력
 // function App(){
   // Jsx는 닫는 태그가 필수적이다
@@ -21,26 +22,49 @@ import ReactDOM from 'react-dom/client';
   // )
 // }
 
+
 ///// 입출력
 // function App(props) {
 //   console.log(props)
 //   return <h1>{props.model} {props.color}</h1>
 // }
 
+
 ///// Alert Event
 // function App() {
-//   function handleChange() {
-//     alert("hello React")
+//   function handleChange(data) {
+//     alert(data)
 //   }
+
 
 //   return (
 //     <div>
 //       <h1>Event</h1>
-//       <button onClick={handleChange}>button</button>
+//       <button onClick={ () => handleChange('hello React') }>button</button>
 //     </div>
 //   )
 // }
 
+
+///// if else를 활용한 function componenet
+function Firstitem() {
+  return <h1>item1</h1>
+}
+
+function Seconditem() {
+  return <h1>item2</h1>
+}
+
+function App(props) {
+  if (props.model === 'item1') {
+    return <Firstitem/>
+  }
+  else {
+    return <Seconditem/>
+  }
+}
+
+
 // Render
 const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(<App model="제네시스" color="블랙" />);
+root.render(<App model="item1" color="black" />);
