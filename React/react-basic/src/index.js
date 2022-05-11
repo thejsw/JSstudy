@@ -47,24 +47,44 @@ import ReactDOM from 'react-dom/client';
 
 
 ///// if else를 활용한 function componenet
-function Firstitem() {
-  return <h1>item1</h1>
-}
+// function Firstitem() {
+//   return <h1>item1</h1>
+// }
 
-function Seconditem() {
-  return <h1>item2</h1>
-}
+// function Seconditem() {
+//   return <h1>item2</h1>
+// }
 
-function App(props) {
-  if (props.model === 'item1') {
-    return <Firstitem/>
-  }
-  else {
-    return <Seconditem/>
-  }
-}
+// function App(props) {
+//   if (props.model === 'item1') {
+//     return <Firstitem/>
+//   }
+//   else {
+//     return <Seconditem/>
+//   }
+// }
 
+
+///// && operator를 활용한 function componenet
+// let items = ['item1', 'item2', 'item3']
+
+// function App(props) {
+//   let items = props.items
+  
+//   console.log(items)
+
+//   return (
+//     <div>
+//       <h1>items length</h1>
+//       {/* items.length가 1 이상일 경우에 실행 */}
+//       {
+//         items.length > 1 &&
+//         <h1>items length is {items.length}</h1>
+//       }
+//     </div>
+//   )
+// }
 
 // Render
 const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(<App model="item1" color="black" />);
+root.render(<App items={items} />);
