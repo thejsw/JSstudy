@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom/client';
 
 // function Component
@@ -86,7 +86,7 @@ import ReactDOM from 'react-dom/client';
 // }
 
 
-// 삼항연산자를 활용한 function componenet
+///// 삼항연산자를 활용한 function componenet
 // function App(props) {
 //   console.log(props)
 
@@ -98,7 +98,7 @@ import ReactDOM from 'react-dom/client';
 // }
 
 
-// map을 활용한 function component
+///// map을 활용한 function component
 // function App(model) {
 //   let items = ['item1', 'item2', 'item3']
 
@@ -113,30 +113,49 @@ import ReactDOM from 'react-dom/client';
 // }
 
 
-// form
+///// form
+// function App() {
+
+//   function handleChange(e) {
+//     console.log(e.currentTarget.value)
+//   }
+//   function handleSubmit(e) {
+//     e.preventDefault()
+//     alert('제출되었습니다')
+//   }
+
+//   return (
+//     <form onSubmit={handleSubmit}>
+//       <label> 이메일을 입력하세요 {""} {/* 띄어쓰기 */}
+//         {/* <input type="text" placeholder='email' onChange={handleChange}> */}
+//           <
+//             input type="text"
+//             placeholder='email'
+//             onChange={handleChange}
+//             style={{ padding: '10px', backgroundColor: 'black', color: '#fff' }}
+//           />
+//         {/* </input> */}
+//       </label>
+//     </form>
+//   )
+// }
+
+
+///// React Hooks: 함수형태의 컴포넌트에서 사용되는 기술들, 클래스형 컴포넌트 개선 
+///// useState: 상태관리, useEffect: 렌더링 이후 작업 설정, useRef: 특정 DOM 선택
+
 function App() {
-
-  function handleChange(e) {
-    console.log(e.currentTarget.value)
-  }
-  function handleSubmit(e) {
-    e.preventDefault()
-    alert('제출되었습니다')
-  }
-
+  console.log('Switch!')
+  // useState: 렌더링된 데이터를 변경할 때 쓰는 함수
+  // 구조 분해 할당, let [초기값, state를 바꾸는 함수]
+  let [data, setData] = useState('Apple')
+  
   return (
-    <form onSubmit={handleSubmit}>
-      <label> 이메일을 입력하세요 {""} {/* 띄어쓰기 */}
-        {/* <input type="text" placeholder='email' onChange={handleChange}> */}
-          <
-            input type="text"
-            placeholder='email'
-            onChange={handleChange}
-            style={{ padding: '10px', backgroundColor: 'black', color: '#fff' }}
-          />
-        {/* </input> */}
-      </label>
-    </form>
+    <div>
+      <h1>{data}</h1>
+      <button onClick={() => setData(
+        )}>button</button>
+    </div>
   )
 }
 
