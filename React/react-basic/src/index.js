@@ -142,19 +142,42 @@ import ReactDOM from 'react-dom/client';
 
 
 ///// React Hooks: 함수형태의 컴포넌트에서 사용되는 기술들, 클래스형 컴포넌트 개선 
+
 ///// useState: 상태관리, useEffect: 렌더링 이후 작업 설정, useRef: 특정 DOM 선택
 
-function App() {
-  console.log('Switch!')
-  // useState: 렌더링된 데이터를 변경할 때 쓰는 함수
-  // 구조 분해 할당, let [초기값, state를 바꾸는 함수]
-  let [data, setData] = useState('Apple')
+// function App() {
+//   console.log('Switch!')
+//   // useState: 렌더링된 데이터를 변경할 때 쓰는 함수
+//   // 구조 분해 할당, let [초기값, state를 바꾸는 함수]
+//   let [data, setData] = useState('Apple')
   
+//   return (
+//     <div>
+//       <h1>{data}</h1>
+//       <button onClick={() => setData(
+//         )}>button</button>
+//     </div>
+//   )
+// }
+
+///// useEffect: 함수 컴포넌트 안에서 side effect를 실행함
+///// useEffect(callback(effect), dependency)
+
+function App() {
+  console.log('App loaded!')
+  let [count, setCount] = useState(0)
+
+  // side effect
+  useEffect(() => {
+    document.title = `${count} 클릭했습니다`
+  })
+
   return (
     <div>
-      <h1>{data}</h1>
-      <button onClick={() => setData(
-        )}>button</button>
+      <p>
+        {count}번 클릭했습니다
+      </p>
+      <button onClick={() => setCount(count + 1)}>button</button>
     </div>
   )
 }
