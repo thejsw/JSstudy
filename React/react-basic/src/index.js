@@ -182,22 +182,43 @@ import ReactDOM from 'react-dom/client';
 //   )
 // }
 
-function App() {
-  console.log('App Loaded!')
-  let [count, setCount] = useState(0)
+// function App() {
+//   console.log('App Loaded!')
+//   let [count, setCount] = useState(0)
 
-  console.log(count)
+//   console.log(count)
+
+//   useEffect(() => {
+//     setTimeout(() => {
+//       setCount(count + 1)
+//     }, 1000)
+//   }, [])
+//   // useEffect 함수를 실행할 때, settimeout에서 count 값이 변하며 컴포넌트가 계속 리렌더링하는 문제 발생
+//   // [] 빈 array를 추가하여 컴포넌트가 처음 로드되었을때만 실행하도록 유도
+// }
+
+function App() {
+  console.log('App loaded')
+
+  let [data, setData] = useState(0)
 
   useEffect(() => {
-    setTimeout(() => {
-      setCount(count + 1)
-    }, 1000)
-  }, [])
-  // useEffect 함수를 실행할 때, settimeout에서 count 값이 변하며 컴포넌트가 계속 리렌더링하는 문제 발생
-  // [] 빈 array를 추가하여 컴포넌트가 처음 로드되었을때만 실행하도록 유도
+    console.log('..')
+  }, [data])
+  // [dependency, ..]
+  // 빈 array가 아닌 dependency가 추가될 경우, 업데이트 될 때마다 실행
+
+  function handleChange() {
+    setData(1)
+  }
+
+  return (
+    <div>
+      <h1>...</h1>
+      <button onClick={handleChange}>button</button>
+    </div>
+  )
 }
-
-
 
 // Render
 const root = ReactDOM.createRoot(document.getElementById('root'));
