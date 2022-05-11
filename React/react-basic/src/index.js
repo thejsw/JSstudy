@@ -163,24 +163,41 @@ import ReactDOM from 'react-dom/client';
 ///// useEffect: 함수 컴포넌트 안에서 side effect를 실행함
 ///// useEffect(callback(effect), dependency)
 
+// function App() {
+//   console.log('App loaded!')
+//   let [count, setCount] = useState(0)
+
+//   // side effect
+//   useEffect(() => {
+//     document.title = `${count}번 클릭했습니다`
+//   })
+
+//   return (
+//     <div>
+//       <p>
+//         {count}번 클릭했습니다
+//       </p>
+//       <button onClick={() => setCount(count + 1)}>button</button>
+//     </div>
+//   )
+// }
+
 function App() {
-  console.log('App loaded!')
+  console.log('App Loaded!')
   let [count, setCount] = useState(0)
 
-  // side effect
-  useEffect(() => {
-    document.title = `${count} 클릭했습니다`
-  })
+  console.log(count)
 
-  return (
-    <div>
-      <p>
-        {count}번 클릭했습니다
-      </p>
-      <button onClick={() => setCount(count + 1)}>button</button>
-    </div>
-  )
+  useEffect(() => {
+    setTimeout(() => {
+      setCount(count + 1)
+    }, 1000)
+  }, [])
+  // useEffect 함수를 실행할 때, settimeout에서 count 값이 변하며 컴포넌트가 계속 리렌더링하는 문제 발생
+  // [] 빈 array를 추가하여 컴포넌트가 처음 로드되었을때만 실행하도록 유도
 }
+
+
 
 // Render
 const root = ReactDOM.createRoot(document.getElementById('root'));
