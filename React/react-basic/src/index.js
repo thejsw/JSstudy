@@ -87,12 +87,27 @@ import ReactDOM from 'react-dom/client';
 
 
 // 삼항연산자를 활용한 function componenet
-function App(props) {
-  console.log(props)
+// function App(props) {
+//   console.log(props)
+
+//   return (
+//     <div>
+//       { props.model === 'item1' ? <h1>items1</h1> : <h2>unknown</h2>}
+//     </div>
+//   )
+// }
+
+
+// map을 활용한 function component
+function App(model) {
+  let items = ['item1', 'item2', 'item3']
 
   return (
     <div>
-      { props.model === 'item1' ? <h1>items1</h1> : <h2>unknown</h2>}
+      <h1>items</h1>
+      <ul>
+        {items.map(item => <li>{item}</li>)}
+      </ul>
     </div>
   )
 }
