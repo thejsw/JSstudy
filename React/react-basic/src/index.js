@@ -197,25 +197,46 @@ import ReactDOM from 'react-dom/client';
 //   // [] 빈 array를 추가하여 컴포넌트가 처음 로드되었을때만 실행하도록 유도
 // }
 
-function App() {
-  console.log('App loaded')
+// function App() {
+//   console.log('App loaded')
 
-  let [data, setData] = useState(0)
+//   let [data, setData] = useState(0)
+
+//   useEffect(() => {
+//     console.log('..')
+//   }, [data])
+//   // [dependency, ..]
+//   // 빈 array가 아닌 dependency가 추가될 경우, 업데이트 될 때마다 실행
+
+//   function handleChange() {
+//     setData(1)
+//   }
+
+//   return (
+//     <div>
+//       <h1>...</h1>
+//       <button onClick={handleChange}>button</button>
+//     </div>
+//   )
+// }
+
+
+///// useRef()
+/////
+function App() {
+  let inputElement = useRef()
+  console.log(inputElement)
 
   useEffect(() => {
-    console.log('..')
-  }, [data])
-  // [dependency, ..]
-  // 빈 array가 아닌 dependency가 추가될 경우, 업데이트 될 때마다 실행
-
-  function handleChange() {
-    setData(1)
-  }
+    console.log(inputElement)
+    inputElement.current.focus()
+    inputElement.current.style.outline = '5px solid red'
+  })
 
   return (
     <div>
-      <h1>...</h1>
-      <button onClick={handleChange}>button</button>
+      <h1>useRef</h1>
+      <input type="text" ref={inputElement}></input>
     </div>
   )
 }
