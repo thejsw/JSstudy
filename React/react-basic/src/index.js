@@ -85,6 +85,18 @@ import ReactDOM from 'react-dom/client';
 //   )
 // }
 
+
+// 삼항연산자를 활용한 function componenet
+function App(props) {
+  console.log(props)
+
+  return (
+    <div>
+      { props.model === 'item1' ? <h1>items1</h1> : <h2>unknown</h2>}
+    </div>
+  )
+}
+
 // Render
 const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(<App items={items} />);
+root.render(<App model='item1'/>);
