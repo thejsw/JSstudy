@@ -9,18 +9,23 @@ import ReactDOM from 'react-dom/client';
 //   return <h1>Hello World</h1>
 // }
 
-function App(){
+// function App(){
 
   // Jsx는 닫는 태그가 필수적이다
   // 줄바꿈에는 ()를 사용해야 한다
-  return (
-    <div>
-      <h1>Hello World</h1>
-      <p>Hello World</p>
-    </div>
-  )
+  // return (
+  //   <div>
+  //     <h1>Hello World</h1>
+  //     <p>Hello World</p>
+  //   </div>
+  // )
+// }
+
+function App(props) {
+  console.log(props)
+  return <h1>{props.model} {props.color}</h1>
 }
 
 // Render
 const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(<App />);
+root.render(<App model="제네시스" color="블랙" />);
