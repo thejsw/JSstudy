@@ -230,13 +230,15 @@ function App() {
   useEffect(() => {
     console.log(inputElement)
     inputElement.current.focus()
-    inputElement.current.style.outline = '5px solid red'
+    inputElement.current.innerHTML = 'made by useRef()'
+    inputElement.current.style.border = '5px solid red'
+    inputElement.current.style.color = 'blue'
   })
 
   return (
     <div>
       <h1>useRef</h1>
-      <input type="text" ref={inputElement}></input>
+      <h1 ref={inputElement}></h1>
     </div>
   )
 }
