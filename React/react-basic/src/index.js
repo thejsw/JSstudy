@@ -9,8 +9,8 @@ import ReactDOM from 'react-dom/client';
 //   return <h1>Hello World</h1>
 // }
 
+////// 출력
 // function App(){
-
   // Jsx는 닫는 태그가 필수적이다
   // 줄바꿈에는 ()를 사용해야 한다
   // return (
@@ -21,10 +21,25 @@ import ReactDOM from 'react-dom/client';
   // )
 // }
 
-function App(props) {
-  console.log(props)
-  return <h1>{props.model} {props.color}</h1>
-}
+///// 입출력
+// function App(props) {
+//   console.log(props)
+//   return <h1>{props.model} {props.color}</h1>
+// }
+
+///// Alert Event
+// function App() {
+//   function handleChange() {
+//     alert("hello React")
+//   }
+
+//   return (
+//     <div>
+//       <h1>Event</h1>
+//       <button onClick={handleChange}>button</button>
+//     </div>
+//   )
+// }
 
 // Render
 const root = ReactDOM.createRoot(document.getElementById('root'));
