@@ -99,19 +99,47 @@ import ReactDOM from 'react-dom/client';
 
 
 // map을 활용한 function component
-function App(model) {
-  let items = ['item1', 'item2', 'item3']
+// function App(model) {
+//   let items = ['item1', 'item2', 'item3']
+
+//   return (
+//     <div>
+//       <h1>items</h1>
+//       <ul>
+//         {items.map(item => <li>{item}</li>)}
+//       </ul>
+//     </div>
+//   )
+// }
+
+
+// form
+function App() {
+
+  function handleChange(e) {
+    console.log(e.currentTarget.value)
+  }
+  function handleSubmit(e) {
+    e.preventDefault()
+    alert('제출되었습니다')
+  }
 
   return (
-    <div>
-      <h1>items</h1>
-      <ul>
-        {items.map(item => <li>{item}</li>)}
-      </ul>
-    </div>
+    <form onSubmit={handleSubmit}>
+      <label> 이메일을 입력하세요 {""} {/* 띄어쓰기 */}
+        {/* <input type="text" placeholder='email' onChange={handleChange}> */}
+          <
+            input type="text"
+            placeholder='email'
+            onChange={handleChange}
+            style={{ padding: '10px', backgroundColor: 'black', color: '#fff' }}
+          />
+        {/* </input> */}
+      </label>
+    </form>
   )
 }
 
 // Render
 const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(<App model='item1'/>);
+root.render(<App/>);
