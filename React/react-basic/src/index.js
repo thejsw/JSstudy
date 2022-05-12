@@ -223,26 +223,109 @@ import ReactDOM from 'react-dom/client';
 
 ///// useRef()
 /////
-function App() {
-  let inputElement = useRef()
-  console.log(inputElement)
+// function App() {
+//   let inputElement = useRef()
+//   console.log(inputElement)
 
-  useEffect(() => {
-    console.log(inputElement)
-    inputElement.current.focus()
-    inputElement.current.innerHTML = 'made by useRef()'
-    inputElement.current.style.border = '5px solid red'
-    inputElement.current.style.color = 'blue'
-  })
+//   useEffect(() => {
+//     console.log(inputElement)
+//     inputElement.current.focus()
+//     inputElement.current.innerHTML = 'made by useRef()'
+//     inputElement.current.style.border = '5px solid red'
+//     inputElement.current.style.color = 'blue'
+//   })
 
+//   return (
+//     <div>
+//       <h1>useRef</h1>
+//       <h1 ref={inputElement}></h1>
+//     </div>
+//   )
+// }
+
+
+function Form() {
+  console.log('Form Loaded')
+
+  const {name, setName} = useState('')
+
+  
+  function handleSubmit(e) {
+    e.preventDefault()
+    console.log(name)
+  }
+
+  function handleChange(e) {
+    console.log(e.target.value)
+    setName(e.target.value)
+  }
+  
   return (
     <div>
-      <h1>useRef</h1>
-      <h1 ref={inputElement}></h1>
+      <form onSubmit={handleSubmit}>
+        <input type="text" onChange={handleChange}></input>
+        <button>Add</button>
+      </form>
     </div>
   )
 }
 
+// FilterButton
+function FilterButton(props) {
+  return (
+    <button>(props.name)</button>
+  )
+}
+
+// Todo
+function Todo(props) {
+  return (
+    <>
+      <div>
+        {props.name}
+      </div>
+    </>
+  )
+}
+
+const Filter_map = {
+  All: () => true,
+  Active: task => !task.completed,
+  Completed: task => task.completed
+}
+
+// 필터 이름을 Array로 리턴한다.
+const Filter_names = Object.keys(Filter_map)
+console.log(Filter_names)
+
+function App(props) {
+  console.log('App Loaded')
+
+  const {tasks, setTasks} = useState(props.tasks)
+
+  const filterList = Filter_names.map(name => <FilterButton key={name} name={name}/>)
+  const taskList = tasks.map(task => <Todo key={task.id} name={task.name}/>)
+
+  return (
+    <div>
+      <h1>What needs to be done?</h1>
+      <form></form>
+      {filterList}
+      <ul>
+        {taskList}
+      </ul>
+    </div>
+  )
+}
+
+const DATA = [
+  { id: 'todo-0', name: '운동하기', completed: true},
+  { id: 'todo-1', name: '공부하기', completed: true},
+  { id: 'todo-2', name: '여행가기', completed: true},
+]
+
+
 // Render
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(<App/>);
+
