@@ -244,7 +244,7 @@ import ReactDOM from 'react-dom/client';
 // }
 
 
-function Form() {
+function Form(props) {
   console.log('Form Loaded')
 
   const {name, setName} = useState('')
@@ -252,18 +252,19 @@ function Form() {
   
   function handleSubmit(e) {
     e.preventDefault()
-    console.log(name)
+    props.addTask(name)
+    setName('')
   }
 
   function handleChange(e) {
-    console.log(e.target.value)
+    // console.log(e.target.value)
     setName(e.target.value)
   }
   
   return (
     <div>
       <form onSubmit={handleSubmit}>
-        <input type="text" onChange={handleChange}></input>
+        <input type="text" value={name} onChange={handleChange}></input>
         <button>Add</button>
       </form>
     </div>
@@ -279,11 +280,12 @@ function FilterButton(props) {
 
 // Todo
 function Todo(props) {
+  console.log(props)
   return (
     <>
-      <div>
-        {props.name}
-      </div>
+      <div>{props.name}</div>
+      <button>Edit</button>
+      <button onClick={() => props.deleteTask(props.id)}>Delete</button>
     </>
   )
 }
@@ -304,12 +306,24 @@ function App(props) {
   const {tasks, setTasks} = useState(props.tasks)
 
   const filterList = Filter_names.map(name => <FilterButton key={name} name={name}/>)
-  const taskList = tasks.map(task => <Todo key={task.id} name={task.name}/>)
+  const taskList = tasks.map(task => <Todo id={task.id} deleteTask={deleteTask} key={task.id} name={task.name}/>)
 
+  function addTask(name) {
+    const newTask = { id: "todo-" + Math.random(), name: name, completed: false}
+    console.log(newTask)
+
+    setTasks([...tasks, newTask])
+  }
+
+  function deleteTask(id) {
+    const remainingTasks = tasks.filter(task => id !== task.id)
+    setTasks(remainingTasks)
+  }
+  
   return (
     <div>
       <h1>What needs to be done?</h1>
-      <form></form>
+      <form addTask={addTask}></form>
       {filterList}
       <ul>
         {taskList}
