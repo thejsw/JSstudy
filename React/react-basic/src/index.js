@@ -244,18 +244,24 @@ import ReactDOM from 'react-dom/client';
 // }
 
 
+
+
+
+// Form
 function Form(props) {
   console.log('Form Loaded')
 
   const {name, setName} = useState('')
 
-  
+  // 새로운 Todo item을 추가
+  // input의 value를 다시 빈 칸으로 만든다
   function handleSubmit(e) {
     e.preventDefault()
     props.addTask(name)
     setName('')
   }
 
+  // name값을 변경시킨다
   function handleChange(e) {
     // console.log(e.target.value)
     setName(e.target.value)
@@ -280,11 +286,21 @@ function FilterButton(props) {
 
 // Todo
 function Todo(props) {
-  console.log(props)
+  console.log('Todo Loaded')
   return (
     <>
-      <div>{props.name}</div>
+      <div>
+        <input 
+        type="checkbox"
+        // props.completed: true or false
+        defaultChecked={props.completed}
+        // task의 completed를 변경시킨다
+        onChange={props.toggleTaskCompleted(props.id)}
+        />
+        {props.name}
+      </div>
       <button>Edit</button>
+      {/* {task를 삭제한다} */}
       <button onClick={() => props.deleteTask(props.id)}>Delete</button>
     </>
   )
@@ -300,26 +316,52 @@ const Filter_map = {
 const Filter_names = Object.keys(Filter_map)
 console.log(Filter_names)
 
+// 컴포넌트들을 모으는 곳, App에서 만든 함수를 다른 컴포넌트에 배분할 수 있다
 function App(props) {
   console.log('App Loaded')
-
+// useState
   const {tasks, setTasks} = useState(props.tasks)
-
+// 필터 버튼
   const filterList = Filter_names.map(name => <FilterButton key={name} name={name}/>)
-  const taskList = tasks.map(task => <Todo id={task.id} deleteTask={deleteTask} key={task.id} name={task.name}/>)
-
+// task 리스트
+  const taskList = tasks
+  .map(task => (
+  <Todo 
+    id={task.id} 
+    deleteTask={deleteTask}
+    completed={task.completed}
+    key={task.id}
+    name={task.name}
+    toggleTaskCompleted={toggleTaskCompleted}
+    />))
+// 새로운 task를 추가한다
   function addTask(name) {
-    const newTask = { id: "todo-" + Math.random(), name: name, completed: false}
+    const newTask = {
+      id: "todo-" + Math.random(),
+      name: name,
+      completed: false
+    }
     console.log(newTask)
 
     setTasks([...tasks, newTask])
   }
-
+// task를 삭제한다
   function deleteTask(id) {
     const remainingTasks = tasks.filter(task => id !== task.id)
     setTasks(remainingTasks)
   }
-  
+// task의 completed 상태를 변경시킨다
+  function toggleTaskCompleted(id) {
+    const updatedTasks = tasks.map(task => {
+      if (id === task.id) {
+        return {...task, completed: !tasks.completed}
+      }
+      return task
+    })
+
+    setTasks(updatedTasks)
+  }
+
   return (
     <div>
       <h1>What needs to be done?</h1>
@@ -331,12 +373,18 @@ function App(props) {
     </div>
   )
 }
-
+// App 컴포넌트에 통과되는 props
 const DATA = [
   { id: 'todo-0', name: '운동하기', completed: true},
   { id: 'todo-1', name: '공부하기', completed: true},
   { id: 'todo-2', name: '여행가기', completed: true},
 ]
+
+// 컴포넌트
+// App
+// Form
+// filterButton
+// Todo
 
 
 // Render
