@@ -3,7 +3,13 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 
 function App() {
-  return <h1>Front Server</h1>
+  fetch('http://localhost:3000')
+  .then(res => res.text())
+  .then(result => console.log(result))
+
+  return (
+    <h1>Front Server</h1>
+  )
 }
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

@@ -1,7 +1,12 @@
 const express = require('express');
 const app = express();
 const port = 3000;
+const cors = require('cors');
 
+// app.use() 미들웨어
+app.use(cors())
+
+// 라우팅
 app.get('/', (req, res) => {
     res.send('hello world')
 })
