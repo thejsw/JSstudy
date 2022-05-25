@@ -1,5 +1,11 @@
+////////////////// 서버 설정
 npm, nodemon 설치
 npm init
 npm i express
 nodemon start
 localhost:3000
+
+//////////////////////////// 뷰 설정
+npx create-react-app view
+cd view
+npm start
