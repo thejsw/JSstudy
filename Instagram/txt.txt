@@ -1,0 +1,5 @@
+npm, nodemon 설치
+npm init
+npm i express
+nodemon start
+localhost:3000
