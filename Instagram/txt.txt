@@ -12,3 +12,10 @@ npm start
 
 //////////// CORS - Cross Origin resource sharing (BE)
 npm i cors
+
+//////////// Error
+서버 상태 확인 - 200, 400, 500
+데이터 전송 과정에서 문제가 있는지 확인
+데이터의 유무, 알맞은 데이터 확인
+에러 메세지 출력. throw, status(500), bad request
+console.log를 통해 에러를 확인하면서 따라가기
