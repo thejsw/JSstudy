@@ -433,6 +433,8 @@ function Profile() {
 
   const [profile, setProfile] = useState(null);
   const [isFollowing, setIsFollowing] = useState(null);
+  const [followerList, setFollowerList] = useState(null);
+  const [followingList, setFollowingList] = useState(null);
   const [articles, setArticles] = useState([]);
 
   useEffect(() => {
@@ -441,26 +443,65 @@ function Profile() {
       fetch(`http://localhost:3000/profiles/${username}/isFollowing`, {
         headers: { 'Authorization': 'Bearer ' + localStorage.getItem('jwt') }
       }),
+      fetch(`http://localhost:3000/profiles/${username}/followerList`, {
+        headers: { 'Authorization': 'Bearer ' + localStorage.getItem('jwt') }
+      }),
+      fetch(`http://localhost:3000/profiles/${username}/followingList`, {
+        headers: { 'Authorization': 'Bearer ' + localStorage.getItem('jwt') }
+      }),
       fetch(`http://localhost:3000/articles?username=${username}`)
     ])
     .then(responses => { 
-      console.log(responses)
-
-      return Promise.all(responses.map(response => response.json()))
+    //// status 200만 받을 때 > 이미지 오류
+    responses.map(response => {
+        if (!response.ok) {
+            throw response;
+        }
+    })
+    return Promise.all(responses.map(response => response.json()))
     })
     .then(data => {
       console.log(data)
 
       setProfile(data[0]);
       setIsFollowing(data[1]);
-      setArticles(data[2]);
+      setFollowerList(data[2]);
+      setFollowingList(data[3]);
+      setArticles(data[4]);
     })
     .catch(error => setError(error))
     .finally(() => setIsLoaded(true))
   }, [username])
 
-  function handleFollow() {
+  function handleFollow(e) {
+    e.preventDefault();
+    
+    if (!isFollowing) { // 팔로잉 하지 않았을 때 > 팔로우를 시작함
+        fetch(`http://localhost:3000/profiles/${username}/follow`, {
+            method: 'POST', // POST 메소드 사용
+            headers: {'Authorization': `Bearer ${localStorage.getItem('jwt')}`},
+        })
+        .then(res => {
+            if (!res.ok) {
+                throw res;
+            }
+            return setIsFollowing(true); // true(팔로우)
+        })
+        .catch(error => setError(error))
 
+    } else { // 팔로잉을 하고 있을 때 > 팔로우를 취소함
+        fetch(`http://localhost:3000/${username}/follow`, {
+            method: 'DELETE', // DELETE 메소드 사용
+            headers: {'Authorization': `Bearer ${localStorage.getItem('jwt')}`},
+        })
+        .then(res => {
+            if (!res.ok) {
+                throw res;
+            }
+            return setIsFollowing(false); // false(언팔로우)
+        })
+        .catch(error => setError(error))
+    }
   }
 
   console.log(profile)
@@ -483,8 +524,8 @@ function Profile() {
 
       <div>
         <ul>
-          <li><b>Follower</b> 0</li>
-          <li><b>Following</b> 0</li>
+          <li><b>Follower</b> {followerList.length} </li>
+          <li><b>Following</b> {followingList.length} </li>
           <li><b>Posts</b> {articles.length}</li>
         </ul>
       </div>
