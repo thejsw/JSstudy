@@ -1,643 +1,931 @@
-const express = require('express');
-const app = express();
-const port = 3000;
-// cross origin 요청 허가
-const cors = require('cors');
-// ODM 패키지
-const mongoose = require('mongoose');
-// req.body를 받는다.
-const cookieParser = require('cookie-parser');
-// 암호화, 로그인 토큰 발급 등
-const crypto = require('crypto');
-const jwt = require('jsonwebtoken');
-// 유저 인증을 하는 패키지
-const passport = require('passport');
-const passportJwt = require('./auth/passportJwt');
-const auth = passport.authenticate('jwt', { session: false });
-// form 데이터를 파싱한다(특히 파일에 특화되어 있다)
-const formidable = require('formidable');
-// NodeJS에서 파일 핸들링
-const fs = require('fs');
+import React, { useState, useEffect, useRef, useContext, createContext } from 'react';
+import ReactDOM from 'react-dom/client';
+import { BrowserRouter as Router, Routes, Route, Outlet, Link, 
+  useParams, Navigate, useNavigate, useLocation } from "react-router-dom";
+import './index.css';
 
-// # app.use() 미들웨어
-// 유틸리티 기능들
-app.use(express.json())
-app.use(express.urlencoded({ extended: false }))
-app.use(cookieParser())
-app.use(cors())
-// express에서 정적파일 제공
-app.use(express.static('public'));
-app.use(express.static('data'));
+function App() {
+  console.log('App Loaded!');
 
-// # 데이터베이스 연결
-mongoose.connect('mongodb://127.0.0.1:27017/final', // url
-    { useNewUrlParser: true, useUnifiedTopology: true  } // options
-)
-const { User, Follow, Article, Favorite, Comment, Token } = require('./models/model');
-
-// # UserException 클래스
-function UserException(message) {
-    this.name = 'UserException';
-    this.message = message;
-
-    this.toString = () => {
-        return this.name + ': ' + this.message;
-    }
+  return (
+    <AuthProvider>
+      <Router>
+        <Routes>
+          {/* 로그인 필요 */}
+          <Route path="/" element={<AuthRequired><Layout /></AuthRequired>}>
+            <Route index element={<Home />} />
+            <Route path="create" element={<CreateArticle />} />
+            <Route path="explore" element={<Explore />} />
+            <Route path="/p/:postId">
+              <Route index element={<PostView />} />
+              <Route path="update" element={<UpdateArticle />} />
+              <Route path="comments" element={<Comments />} />
+            </Route>
+            <Route path="/profiles/:username">
+              <Route index element={<Profile />} />
+              <Route path="edit" element={<ProfileEdit />} />
+            </Route>
+          </Route>
+          {/* 로그인 필요하지 않음 */}
+          <Route path="account/signup" element={<SignUp />} />
+          <Route path="login" element={<Login />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </Router>
+    </AuthProvider>
+  )
 }
 
-// # 라우팅
-app.get('/', (req, res, next) => {
-    try { // 여기서는 코드를 마음껏 작성한다
+const AuthContext = createContext();
 
-        setTimeout(() => {
-            res.json('hello world');
-        }, 3000)
-        
-    } catch (error) { // 여기서 에러를 처리한다
-        next(error)
-    }
-    // # 런타임 에러, 예외, 유효한 코드에서 발생
-    // es.json('hello world') => res를 es로 잘못 적은 에러 
+function AuthProvider(props) {
+  console.log('AuthProvider Loaded!');
 
-    // # parse-time 에러, try catch로 복구 불가
-    // res.json('hello world' => )를 빼먹은 에러 
-})
+  const [error, setError] = useState(null);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [user, setUser] = useState(null);
 
-app.get('/user', auth, async (req, res, next) => {
-    try {
-        // req.user: 로그인한 유저가 담긴다.
-        res.json(req.user);
-    } catch (error) {
-        next(error)
-    }
-})
+  // 처음 접속했을때 = 새로고침
+  useEffect(() => {
+    // 서버에 토큰을 보내서 유저 정보를 요청한다.
+    fetch('http://localhost:3000/user', {
+      headers: { 'Authorization': 'Bearer ' + localStorage.getItem('jwt'), }
+    })
+    .then(res => {
+      if (res.status === 401) {
+        return null;
+      }
+      if (!res.ok) {
+        throw res;
+      }
+      return res.json();
+    })
+    .then(data => setUser(data))
+    .catch(error => setError(error))
+    .finally(() => setIsLoaded(true))
+  }, [])
 
-// # 로그인, 회원가입
-app.post('/user/login', async (req, res, next) => {
-    try {
-        const user = await User.findOne({ email: req.body.email, active: true });
-        // 가입된 사용자인지 확인한다
-        if (!user) {
-            // return res.json({ message: '사용자를 찾을 수 없습니다' })
-            throw new UserException('사용자를 찾을 수 없습니다')
+  // 로그인
+  function signIn(newUser, callback) {
+    setUser(newUser);
+    callback();
+  }
+
+  function logOut() {
+    localStorage.removeItem('jwt');
+    setUser(null);
+  }
+
+  console.log(user);
+
+  const value = { user, signIn, logOut } // { user: user, signIn: signIn, logOut: logOut }
+
+  if (error) {
+    return <h1>Error!</h1>
+  }
+  if (!isLoaded) {
+    return <h1>Loading...</h1>
+  }
+  return (
+    <AuthContext.Provider value={value}>
+      {props.children}
+    </AuthContext.Provider>
+  )
+}
+
+function AuthRequired(props) {
+  console.log('AuthRequired Loaded!');
+
+  const auth = useContext(AuthContext);
+
+  if (!auth.user) {
+    return <Navigate to="/login" replace />
+  }
+
+  console.log(auth);
+
+  return props.children;
+}
+
+function Layout() {
+  console.log('Layout Loaded!');
+
+  const auth = useContext(AuthContext);
+  const location = useLocation();
+
+  return (
+    <>
+      <nav>
+        <Link to="/">Home</Link> {" "}
+        <Link to="/explore">Explore</Link> {" "}
+        <Link to="/create">Create</Link> {" "}
+        <Link to={`/profiles/${auth.user.username}`}>Profile</Link> {" "}
+        <button onClick={auth.logOut}>Log out</button>
+      </nav>
+
+      <small>{location.pathname}</small>
+
+      {/* 바뀌는 부분 */}
+      <Outlet />
+    </>
+  )
+}
+
+function Home() {
+  console.log('Home Loaded!');
+
+  const [error, setError] = useState(null);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [articles, setArticles] = useState([])
+
+  useEffect(() => {
+    fetch(`http://localhost:3000/feed`, {
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('jwt')}` }
+    })
+    .then(res => {
+      if (!res.ok) {
+        throw res;
+      }
+      return res.json()
+    })
+    .then(data => {
+      setArticles(data)
+    })
+    .catch(error => {
+      setError(error)
+    })
+    .finally(() => setIsLoaded(true));
+  }, [])
+
+  console.log(articles)
+
+  return (
+    <>
+      <h1>Home</h1>
+    </>
+  )
+}
+
+function PostView() {
+  console.log('PostView Loaded!');
+
+  const params = useParams();
+  const postId = params.postId;
+
+  const [error, setError] = useState(null);
+  const [isLoaded, setIsLoaded] = useState(false);
+  // 게시물을 담을 변수
+  const [article, setArticle] = useState(null);
+  // 해당 게시물을 사용자가 좋아하는 게시물인지 여부
+  const [isFavorite, setIsFavorite] = useState(null);
+  const [articles, setArticles] = useState([]);
+
+
+  // 순회 가능한 객체(Array)에 주어진 모든 프로미스가 이행된 후,
+  // 주어진 프로미스중 하나라도 거부되는 경우 error 발생
+  useEffect(() => {
+    Promise.all([
+      fetch(`http://localhost:3000/articles/${postId}`),
+      fetch(`http://localhost:3000/articles/${postId}/favorite`, {
+        headers: { 'Authorization': 'Bearer ' + localStorage.getItem('jwt') }
+      }),
+      fetch(`http://localhost:3000/articles/${postId}/more`)
+    ])
+    .then(responses => 
+      Promise.all(responses.map(response => response.json()))
+    )
+    .then(data => {
+      setArticle(data[0])
+      setIsFavorite(data[1])
+      setArticles(data[2])
+    })
+    .catch(error => setError(error))
+    .finally(() => setIsLoaded(true))
+  }, [postId])
+  // postId가 바뀔 때 useEffect가 effect(callback)을 다시 호출한다
+
+  console.log(article)
+  console.log(isFavorite)
+  console.log(articles)
+
+  if (error) {
+    return <h1>Error!</h1>
+  } 
+  if (!isLoaded) {
+    return <h1>Loading...</h1>
+  }
+  return (
+    <>
+      <PostItem article={article} isFavorite={isFavorite} />
+      {/* 이전글, 다음글 버튼은 PostView에서만 보인다 */}
+      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+        {articles.prevArticle &&
+          <Link to={`/p/${articles.prevArticle._id}`}>&larr; Prev</Link>
         }
-        // 로그인 시에 받은 비밀번호와 user의 비밀번호를 비교한다
-        const hashedPassword = crypto.pbkdf2Sync(req.body.password, user.salt, 310000, 32, 'sha256')
-        .toString('hex')
-
-        if (user.password !== hashedPassword) {
-            // return res.json({ message: '비밀번호가 일치하지 않습니다' })
-            throw new UserException('비밀번호가 일치하지 않습니다')
+        {articles.nextArticle &&
+          <Link to={`/p/${articles.nextArticle._id}`}>Next &rarr;</Link>
         }
+      </div>
+    </>
+  )
+}
 
-        const token = jwt.sign({ username: user.username }, 'shhhhh');
-        
-        res.json({ user, token }); // ({ user: user, token: token })
-    } catch (error) {
-        // UserException은 다른 방식으로 처리 (200)
-        if (error instanceof UserException) {
-            return res.json(error)
+function PostItem({ article, isFavorite: isFavoriteInitial }) {
+  console.log('PostItem Loaded!');
+
+  const auth = useContext(AuthContext);
+  // 게시물 작성자와 로그인 유저가 일치하면 Master
+  const isMaster = article.author._id === auth.user._id ? true : false;
+
+  const postId = article._id;
+  
+  const navigate = useNavigate();
+
+  // db에서 가져온 처음 상태
+  const [isFavorite, setIsFavorite] = useState(isFavoriteInitial);
+  const [favoriteCount, setFavoriteCount] = useState(article.favoriteCount);
+
+  function deleteArticle() {
+    fetch(`http://localhost:3000/articles/${postId}`, {
+      method: 'DELETE',
+      headers: { 'Authorization': 'Bearer ' + localStorage.getItem('jwt') }
+    })
+    .then(res => {
+      if (!res.ok) {
+        throw res;
+      }
+      return res.json();
+    })
+    // replace: true 현재 페이지를 대체한다
+    .then(() => navigate('/', { replace: true }))
+    .catch(error => alert(error))
+  }
+
+  function handleChange() {
+
+    if (!isFavorite) { // 좋아요를 누른다
+      fetch(`http://localhost:3000/articles/${postId}/favorite`, {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + localStorage.getItem('jwt') }
+      })
+      .then(res => {
+        if (!res.ok) {
+          throw res;
         }
-        next(error)
-    }
-})
-
-app.post('/validate', async (req, res, next) => {
-    try {
-        const newUser = req.body;
-        console.log(newUser);
-
-        const username = await User.findOne({ username: newUser.username, active: true })
-        const email = await User.findOne({ email: newUser.email, active: true })
-
-        const validation = {
-            username: { pass: false, message: null },
-            email: { pass: false, message: null },
-            password: { pass: false, message: null },
-            passwordConfirm: { pass: false, message: null }
+        setIsFavorite(true);
+        setFavoriteCount(favoriteCount + 1)
+      })
+      .catch(error => alert("Error!"));
+    } else { // 좋아요를 취소한다
+      fetch(`http://localhost:3000/articles/${postId}/favorite`, {
+        method: 'DELETE',
+        headers: { 'Authorization': 'Bearer ' + localStorage.getItem('jwt') }
+      })
+      .then(res => {
+        if (!res.ok) {
+          throw res;
         }
+        setIsFavorite(false);
+        setFavoriteCount(favoriteCount - 1)
+      })
+      .catch(error => alert("Error!"))
+    }
+  }
 
-        if (newUser.username !== undefined) {
-            if (newUser.username === '') {
-                validation.username.message = '사용자 이름을 입력하세요'
-            } else if (username) {
-                validation.username.message = '이미 가입된 사용자 이름입니다'
-            } else if (newUser.username.match(/[a-z]{5,}/) === null) {
-                validation.username.message = '소문자 알파벳으로 5글자이상 입력하세요'
-            } else {
-                validation.username.pass = true
-                validation.username.message = '가입할 수 있는 사용자 이름입니다'
-            }
+  return (
+    <>
+      <h3>
+        <Link to="">{article.author.username}</Link>
+      </h3>
+      <div>
+        {article.photos.map((photo, index) => (
+          <div key={index}>
+            <img src={`http://localhost:3000/posts/${photo}`} />
+          </div>
+        ))}
+      </div>
+      {isMaster &&
+        <div>
+          <Link to={`/p/${postId}/update`}>수정</Link> {" "} 
+          <button onClick={deleteArticle}>삭제</button>
+        </div>
+      }
+      <button onClick={handleChange}>
+        {!isFavorite ? "좋아요" : "좋아요 취소"}
+      </button>
+      <p>좋아요: {favoriteCount}</p>
+      <p>{article.description}</p>
+      <p><Link to={`/p/${postId}/comments`}>댓글달기</Link></p>
+    </>
+  )
+}
+
+function Comments() {
+  console.log('Comments Loaded!');
+
+  const params = useParams();
+  const postId = params.postId;
+
+  const [error, setError] = useState(null);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [comments, setComments] = useState([]);
+
+  const inputEl = useRef(null);
+
+  useEffect(() => {
+    fetch(`http://localhost:3000/articles/${postId}/comments`, {
+      headers: { 'Authorization': 'Bearer ' + localStorage.getItem('jwt') }
+    })
+    .then(res => {
+      if (!res.ok) {
+        throw res;
+      }
+      return res.json()
+    })
+    .then(data => setComments(data))
+    .catch(error => setError(error))
+    .finally(() => setIsLoaded(true))
+  }, [])
+
+  console.log(comments)
+
+  function handleSubmit(e) {
+    e.preventDefault();
+
+    const formData = new FormData(e.target);
+
+    fetch(`http://localhost:3000/articles/${postId}/comments`, {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + localStorage.getItem('jwt') },
+      body: new URLSearchParams(formData)
+    })
+    .then(res => {
+      if (!res.ok) {
+        throw res;
+      }
+      return res.json();
+    })
+    .then(newComment => {
+      // comments.push(newComment)
+      inputEl.current.value = "";
+      setComments([...comments, newComment]);
+    })
+    .catch(error => alert(error))
+  }
+
+  function deleteComment(commentId) {
+    fetch(`http://localhost:3000/articles/${postId}/comments/${commentId}`, {
+      method: 'DELETE',
+      headers: { 'Authorization': 'Bearer ' + localStorage.getItem('jwt') }
+    })
+    .then(res => {
+      if (!res.ok) {
+        throw res;
+      }
+      return res.json()
+    })
+    .then(() => {
+      const updatedComments = comments.filter(comment => comment._id !== commentId)
+      setComments(updatedComments)
+    })
+    .catch(error => alert(error))
+  }
+
+  if (error) {
+    return <h1>Error!</h1>
+  }
+  if (!isLoaded) {
+    return <h1>Loading...</h1>
+  }
+  return (
+    <>
+      <h3>댓글</h3>
+      <form onSubmit={handleSubmit}>
+        <div className="form-group">
+          <input type="text" name="content" autoComplete="off" ref={inputEl} />
+        </div>
+        <div className="form-group">
+          <button type="submit">Submit</button>
+        </div>
+      </form>
+      <ul>
+        {comments.map((comment, index) => (
+          <li key={index}>
+              {comment.content} {" "}
+              <span onClick={() => deleteComment(comment._id)}>&times;</span>
+          </li>
+        ))}
+      </ul>
+    </>
+  )
+}
+
+function Profile() {
+  console.log('Profile Loaded!');
+
+  const auth = useContext(AuthContext);
+  const params = useParams();
+  const username = params.username;
+  const isMaster = auth.user.username === username ? true : false;
+
+  const [error, setError] = useState(null);
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  const [profile, setProfile] = useState(null);
+  const [isFollowing, setIsFollowing] = useState(null);
+  const [articles, setArticles] = useState([]);
+
+  useEffect(() => {
+    Promise.all([
+      fetch(`http://localhost:3000/profiles/${username}`),
+      fetch(`http://localhost:3000/profiles/${username}/isFollowing`, {
+        headers: { 'Authorization': 'Bearer ' + localStorage.getItem('jwt') }
+      }),
+      fetch(`http://localhost:3000/articles?username=${username}`)
+    ])
+    .then(responses => { 
+      console.log(responses)
+
+      return Promise.all(responses.map(response => response.json()))
+    })
+    .then(data => {
+      console.log(data)
+
+      setProfile(data[0]);
+      setIsFollowing(data[1]);
+      setArticles(data[2]);
+    })
+    .catch(error => setError(error))
+    .finally(() => setIsLoaded(true))
+  }, [username])
+
+  function handleFollow() {
+
+  }
+
+  console.log(profile)
+  console.log(isFollowing)
+  console.log(articles)
+
+  if (error) {
+    return <h1>Error!</h1>
+  }
+  if (!isLoaded) {
+    return <h1>Loading...</h1>
+  }
+  return (
+    <>
+      <h1>Profile</h1>
+
+      <div>
+        <img src={`http://localhost:3000/user/${profile.image || 'avatar.jpeg'}`} />
+      </div>
+
+      <div>
+        <ul>
+          <li><b>Follower</b> 0</li>
+          <li><b>Following</b> 0</li>
+          <li><b>Posts</b> {articles.length}</li>
+        </ul>
+      </div>
+
+      <div>
+        <h3>{profile.username}</h3>
+        <p>{profile.bio}</p>
+        {isMaster && 
+          <p><Link to={`/profiles/${username}/edit`}>Edit Profile</Link></p>
         }
+      </div>
 
-        if (newUser.email !== undefined) {
-            if (newUser.email === '') {
-                validation.email.message = '이메일을 입력하세요'
-            } else if (email) {
-                validation.email.message = '이미 사용중인 이메일입니다'
-            } else if (newUser.email.match(/[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/) === null) {
-                validation.email.message = '유효하지 않은 이메일입니다'
-            } else {
-                validation.email.pass = true
-                validation.email.message = '사용 가능한 이메일입니다'
-            }
+      <div>
+        {!isMaster &&
+          <form onSubmit={handleFollow}>
+            <button>
+              {isFollowing ? 'Unfollow' : 'Follow'}
+            </button>
+          </form>
         }
+      </div>
 
-        if (newUser.password !== undefined) {
-            if (newUser.password === '') {
-                validation.password.message = '비밀번호를 입력하세요'
-            } else if (newUser.password.match(/.{8,}/) === null) {
-                validation.password.message = '8글자 이상 입력하세요'
-            } else {
-                validation.password.pass = true
-                validation.password.message = '안전한 비밀번호입니다'
-            }
-        }
+      <div>
+        {articles.map((article, index) => (
+          <div key={index}>
+            <Link to={`/p/${article._id}`}>
+              <img src={`http://localhost:3000/posts/${article.photos[0]}`} />
+            </Link>
+          </div>
+        ))}
+      </div>
+    </>
+  )
+}
 
-        if (newUser.password_confirm !== undefined) {
-            if (newUser.password_confirm === '') {
-                validation.passwordConfirm.message = '비밀번호를 다시한번 입력하세요'
-            } else if (newUser.password !== newUser.password_confirm) {
-                validation.passwordConfirm.message = '비밀번호가 일치하지 않습니다'
-            } else {
-                validation.passwordConfirm.pass = true;
-                validation.passwordConfirm.message = '비밀번호가 일치합니다'
-            }
-        }
+function ProfileEdit() {
+  console.log('ProfileEdit Loaded!');
 
-        res.json(validation);
+  const auth = useContext(AuthContext);
+  const navigate = useNavigate();
 
-    } catch (error) {
-        next(error)
+  const [error, setError] = useState(null);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [profile, setProfile] = useState({});
+  
+  useEffect(() => {
+    fetch(`http://localhost:3000/profiles/${auth.user.username}`)
+    .then(res => {
+      if (!res.ok) {
+        throw res;
+      }
+      return res.json();
+    })
+    .then(data => setProfile(data))
+    .catch(error => setError(error))
+    .finally(() => setIsLoaded(true))
+  }, [])
+
+  function handleSubmit(e) {
+    e.preventDefault();
+
+    fetch(`http://localhost:3000/profiles/edit`, {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + localStorage.getItem('jwt') },
+      body: new FormData(e.target)
+    })
+    .then(res => {
+      if (!res.ok) {
+        throw res;
+      }
+      return res.json()
+    })
+    .then(data => {
+      navigate(`/profiles/${auth.user.username}`)
+    })
+    .catch(error => {
+      alert(error)
+    })
+  }
+
+  if (error) {
+    return <h1>Error!</h1>
+  }
+  if (!isLoaded) {
+    return <h1>Loading...</h1>
+  }
+  return (
+    <>
+      <form onSubmit={handleSubmit}>
+        <div className="form-group">
+          <h3>Username</h3>
+          <p>{profile.username}</p>
+        </div>
+        <div className="form-group">
+          <h3>Image</h3>
+          <input type="file" name="image" />
+          {profile.image && 
+            <p>1 Image uploaded</p>
+          }
+        </div>
+        <div className="form-group">
+          <h3>Bio</h3>
+          <input type="text" name="bio" className="form-group" defaultValue={profile.bio} />
+        </div>
+        <div className="form-group">
+          <h3>Submit</h3>
+          <button type="submit">Submit</button>
+        </div>
+      </form>
+    </>
+  )
+}
+
+function Explore() {
+  console.log('Explore Loaded!');
+
+  const [error, setError] = useState(null);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [articles, setArticles] = useState([]);
+
+  useEffect(() => {
+    fetch('http://localhost:3000/articles')
+    .then(res => {
+      if (!res.ok) {
+        throw res;
+      }
+      return res.json()
+    })
+    .then(data => setArticles(data))
+    .catch(error => setError(error))
+    .finally(() => setIsLoaded(true))
+  }, [])
+
+  console.log(articles)
+
+  if (error) {
+    return <h1>Error!</h1>
+  }
+  if (!isLoaded) {
+    return <h1>Loading...</h1>
+  }
+  return (
+    <>
+      <h1>Explore</h1>
+      <div>
+        {articles.map((article, index) => 
+          <div key={index} style={{ display: 'inline-block' }}>
+            <Link to={`/p/${article._id}`}>
+              <img src={`http://localhost:3000/posts/${article.photos[0]}`} />
+            </Link>
+          </div>
+        )}
+      </div>
+    </>
+  )
+}
+
+function UpdateArticle() {
+  console.log('UpdateArticle Loaded!');
+
+  const navigate = useNavigate();
+  const params = useParams();
+  const postId = params.postId;
+
+  const [error, setError] = useState(null);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [article, setArticle] = useState(null);
+
+  useEffect(() => {
+    fetch(`http://localhost:3000/articles/${postId}`)
+    .then(res => {
+      if (!res.ok) {
+        throw res;  
+      }
+      return res.json()
+    })
+    .then(data => setArticle(data))
+    .catch(error => setError(error))
+    .finally(() => setIsLoaded(true))
+  }, [])
+
+  function handleSubmit(e) {
+    e.preventDefault()
+
+    fetch(`http://localhost:3000/articles/${postId}`, {
+      method: 'PUT',
+      headers: { 'Authorization': 'Bearer ' + localStorage.getItem('jwt') },
+      body: new FormData(e.target)
+    })
+    .then(res => {
+      if (!res.ok) {
+        throw res;
+      }
+      return res.json()
+    })
+    .then(() => navigate(`/p/${postId}`))
+    .catch(error => alert(error))
+  }
+
+  if (error) {
+    return <h1>Error!</h1>
+  }
+  if (!isLoaded) {
+    return <h1>Loading...</h1>
+  }
+  return (
+    <>
+      <h1>Update Article</h1>
+      <form onSubmit={handleSubmit}>
+        <div className="form-group">
+          <h3>Description</h3>
+          <input type="text" name="description" defaultValue={article.description} />
+        </div>
+        <div className="form-group">
+          <h3>Photos</h3>
+          <p>{article.photos.length} photos</p>
+        </div>
+        <div className="form-group">
+          <h3>Submit</h3>
+          <button type="submit">Submit</button>
+        </div>
+      </form>
+    </>
+  )
+}
+
+function CreateArticle() {
+  console.log('CreateArticle Loaded!');
+
+  const navigate = useNavigate();
+
+  function handleSubmit(e) {
+    e.preventDefault();
+
+    fetch('http://localhost:3000/articles', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + localStorage.getItem('jwt') },
+      body: new FormData(e.target)
+    })
+    .then(res => {
+      if (!res.ok) {
+        throw res;
+      }
+      return res.json();
+    })
+    .then(() => {
+      navigate('/')
+    })
+    .catch(error => alert('Error!'));
+  }
+
+  return (
+    <>
+      <form onSubmit={handleSubmit}>
+        <div className="form-group">
+          <h3>Description</h3>
+          <input type="text" className="" name="description" />
+        </div>
+        <div className="form-group">
+          <h3>Photos</h3>
+          <input type="file" name="photos" multiple={true} />
+        </div>
+        <div className="form-group">
+          <h3>Submit</h3>
+          <button type="submit">Submit</button>
+        </div>
+      </form>
+    </>
+  )
+}
+
+function SignUp() {
+  console.log('SignUp Loaded!');
+
+  const [error, setError] = useState(null);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [newUser, setNewUser] = useState({});
+
+  const [validation, setValidation] = useState(null);
+
+  useEffect(() => {
+    console.log('new User..', newUser);
+    fetch('http://localhost:3000/validate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newUser) // JSON.stringify(object) object를 json 포맷으로 변환
+    })
+    .then(res => {
+      if (!res.ok) {
+        throw res; // 커스텀 에러. status가 200이 아닐 경우
+      }
+      return res.json(); // res객체의 body를 parsing한다. 
+    })
+    .then(data => setValidation(data))
+    .catch(error => setError(error))
+    .finally(() => setIsLoaded(true))
+  }, [newUser]) // [dependency]: 처음에 실행된다. dependency가 변할 때마다 실행된다
+
+  function handleChange(e) {
+    const name = e.target.name;
+    const value = e.target.value;
+
+    // newUser에 새로운 속성을 추가한다
+    setNewUser({ ...newUser, [name]: value })
+  }
+
+  function handleSubmit(e) {
+    e.preventDefault();
+
+    for (let key of Object.keys(validation)) {
+      // 4 항목중에 하나라도 pass: false면 form이 제출되지 않도록 한다.
+      if (validation[key].pass === false) {
+        return alert("가입 정보가 올바르지 않습니다.")
+      }
     }
-})
 
-app.post('/users', async (req, res, next) => {
-    try {
-        // 검증이 끝나고 비밀번호를 암호화 한다
-        const salt = crypto.randomBytes(16).toString('hex');
-        // 암호화된 비밀번호
-        const hashedPassword = crypto.pbkdf2Sync(req.body.password, salt, 310000, 32, 'sha256')
-        .toString('hex');
-    
-        const user = new User({
-            username: req.body.username,
-            email: req.body.email,
-            password: hashedPassword,
-            salt: salt
-        })
-    
-        // 새로운 유저를 데이터베이스에 저장한다
-        await user.save()
-    
-        res.json(user)
-
-    } catch (error) {
-        next(error)
-    }
-})
-
-// # 게시물 (article)
-app.post('/articles', auth, async (req, res, next) => { // auth에서 권한을 검사한다
-    try { // try...catch 는 동기적으로 작동한다
-        const form = formidable({ multiples: true }); 
-    
-        form.parse(req, async (err, fields, files) => {
-            try {
-                // photo 파일
-                // 사진이 1개 일때도 Array 타입으로 만든다.
-                const photos = files.photos instanceof Array ? files.photos : new Array(files.photos);
-                const user = await User.findById(req.user._id);
-
-                if (!photos[0].originalFilename) {
-                    throw new Error('이미지를 한장 이상 업로드하세요');
-                }
-
-                const photoArray = photos.map(photo => {
-                    // 이미지의 개수만큼 /data/posts/ 에 이미지를 업로드한다.
-                    const oldpath = photo.filepath;
-                    const ext = photo.originalFilename.split('.')[1];
-                    const newName = photo.newFilename + '.' + ext;
-                    const newpath = __dirname + '/data/posts/' + newName;
-            
-                    fs.renameSync(oldpath, newpath);
-                    // 새로운 파일이름을 return한다
-                    return newName;
-                })
-
-                const article = new Article({
-                    description: fields.description,
-                    photos: photoArray,
-                    author: user._id
-                })
-        
-                await article.save();
-        
-                res.json(article);
-            } catch (error) {
-                next(error)
-            }
-        })
-    } catch (error) {
-        next(error)
-    }
-})
-
-app.get('/articles', async (req, res, next) => {
-    try {
-        // 특정한 유저의 게시물을 가져온다
-        if (req.query.username) { // GET 요청에서만 사용할 수 있다
-            const user = await User.findOne({ username: req.query.username })
-            const articles = await Article.find({ author: user._id }).populate('author')
-
-            res.json(articles)
-        // 전체 게시물을 가져온다
-        } else {
-            const articles = await Article.find().populate('author');
-            res.json(articles)
-        }
-    } catch (error) {
-        next(error)
-    }
-})
-
-app.get('/articles/:postId', async (req, res, next) => {
-    try {
-        // Error Object
-        // { name, message }
-        // name: EvalError, RangeError, ReferenceError, SyntaxError, TypeError, URIError
-        // CastError (Custom error)
-        const article = await Article.findById(req.params.postId).populate('author'); 
-        res.json(article)
-    } catch (error) { // await Promise에서 발생한 에러를 잡는다
-        next(error)
-    }
-})
-
-app.get('/articles/:postId/more', async (req, res, next) => {
-    try {
-        const article = await Article.findById(req.params.postId).populate('author');
-
-        const prevArticle = await Article.findOne({ author: article.author, created: { $lt: article.created } })
-        .sort({ created: -1 })
-
-        const nextArticle = await Article.findOne({ author: article.author, created: { $gt: article.created } })
-
-        res.json({ prevArticle, nextArticle });
-    } catch (error) {
-        next(error)
-    }
-})
-
-app.put('/articles/:id', auth, async (req, res, next) => {
-    try {
-        // id에 일치하는 게시물을 가져온다(수정할 게시물)
-        const article = await Article.findById(req.params.id);
-
-        if (article.author.toString() !== req.user._id.toString()) {
-            // error.name, error.message
-            // error.name: Error, error.message: '게시물을 ...')
-            throw new Error('게시물을 작성한 본인만 수정할 수 없습니다.')
-        }
-
-        const form = formidable();
-
-        form.parse(req, async (err, fields, files) => {
-            try {
-                // 사진에 대한 설명을 업데이트한다
-                article.description = fields.description
-                article.tagList = fields.tagList;
-    
-                // 수정한 게시물을 저장한다
-                await article.save();
-    
-                res.json(article);
-            } catch (error) {
-                next(error)
-            }
-        })
-
-    } catch (error) {
-        next(error)
-    }
-})
-
-app.delete('/articles/:postId', auth, async (req, res, next) => {
-    try {
-        const article = await Article.findById(req.params.postId);
-
-        if (article.author.toString() !== req.user._id.toString()) {
-            throw new Error('게시물을 작성한 사람만 삭제할 수 있습니다')
-        }
-
-        await article.delete();
-
-        res.json(req.params.postId);
-
-    } catch (error) {
-        next(error)
-    }
-})
-
-// # 좋아요
-app.post('/articles/:postId/favorite', auth, async (req, res, next) => {
-    try {
-        const article = await Article.findById(req.params.postId);
-        // 커스텀 에러, 이미 로그인한 유저가 좋아요를 누른 게시물인지 확인한다
-        const favorite = await Favorite.findOne({ user:req.user._id, article: article._id })
-
-        if (favorite) {
-            throw new Error('이미 좋아요를 누른 게시물입니다')
-        }
-
-        const newFavorite = new Favorite({
-            user: req.user._id,
-            article: article._id
-        })
-
-        // 새로운 좋아요 데이터 저장
-        await newFavorite.save();
-
-        // 좋아요를 누른 게시물의 좋아요 수 1 증가
-        article.favoriteCount++;
-        // 업데이트된 게시물 저장
-        await article.save();
-
-        res.json(article)
-
-    } catch (error) {
-        next(error)
-    }
-})
-
-app.get('/articles/:postId/favorite', auth, async (req, res, next) => {
-    try {
-        const favorite = await Favorite.findOne({ article: req.params.postId, user: req.user._id })
-        const isFavorite = favorite ? true : false;
-
-        res.json(isFavorite);
-    } catch (error) {
-        next(error)
-    }
-})
-
-app.delete('/articles/:postId/favorite', auth, async (req, res, next) => {
-    try {
-        const article = await Article.findById(req.params.postId);
-        // 로그인한 유저가 좋아요를 누른 데이터를 찾는다
-        const favorite = await Favorite.findOne({ user: req.user._id, article: article._id });
-
-        // 커스텀 에러
-        if (!article) {
-            throw new Error('존재하지 않는 게시물입니다')
-        }
-        if (!favorite) {
-            throw new Error('이미 삭제된 데이터입니다')
-        }
-
-        await favorite.delete();
-
-        // 게시물의 좋아요를 1 감소
-        article.favoriteCount--;
-        // 게시물 업데이트
-        await article.save();
-
-        res.json(article)
-
-    } catch (error) {
-        next(error)
-    }
-})
-
-// # 피드
-app.get('/feed', auth, async (req, res, next) => {
-    try {
-        // 로그인한 유저가 followerId인 데이터
-        const followingList = await Follow.find({ followerId: req.user._id });
-        // 로그인한 유저가 팔로우하는 계정의 id만 추출
-        const followingIds = followingList.map(following => following.followingId.toString())
-        // 로그인한 유저가 팔로우하는 유저의 게시물
-        const articles = await Article.find({ author: followingIds }).populate('author');
-
-        console.log(followingIds)
-        res.json(articles)
-    } catch (error) {
-        next(error)
-    }
-})
-
-// # 팔로우
-app.post('/profiles/:username/follow', auth, async (req, res, next) => {
-    try {
-        const user = await User.findOne({ username: req.params.username });
-        // 이미 팔로우 하는 지 확인
-        const isFollowing = await Follow.findOne({ followerId: req.user._id, followingId: user._id });
-
-        if (isFollowing) {
-            // 커스텀 에러
-            throw new Error('이미 팔로우합니다');
-        }
-        if (req.user._id.toString() === user._id.toString()) {
-            // 커스텀 에러
-            throw new Error('자신을 팔로우할 수 없습니다')
-        }
-
-        const following = new Follow({
-            followerId: req.user._id,
-            followingId: user._id
-        })
-
-        await following.save();
-
-        res.json(following);
-
-    } catch (error) {
-        next(error)
-    }
-})
-
-app.get('/profiles/:username/isFollowing', auth, async (req, res, next) => {
-    try {
-        const user = await User.findOne({ username: req.params.username });
-        const following = await Follow.findOne({ followerId: req.user._id, followingId: user._id })
-        // 팔로잉을 하는지
-        const isFollowing = following ? true : false;
-
-        res.json(isFollowing);
-    } catch (error) {
-        next (error)
-    }
-})
-
-app.get('/profiles/:username/followerList', auth, async (req, res, next) => {
-    try {
-        const user = await User.findOne({ username: req.params.username });
-        // find(): Array을 리턴한다
-        // populate() ref(User)에 작성한 컬렉션을 참고하여 id값이 일치하는 데이터를 가져온다
-        const followerList = await Follow.find({ followingId: user._id }).populate('followerId');
-    
-        res.json(followerList)
-    } catch (error) {
-        next(error)
-    }
-})
-
-app.get('/profiles/:username/followingList', auth, async (req, res, next) => {
-    try {
-        const user = await User.findOne({ username: req.params.username })
-        const followingList = await Follow.find({ followerId: user._id }).populate('followingId')
-    
-        res.json(followingList)
-    } catch (error) {
-        next(error)
-    }
-})
-
-app.delete('/profiles/:username/follow', auth, async (req, res, next) => {
-    try {
-        const user = await User.findOne({ username: req.params.username });
-        const following = await Follow.findOne({ followerId: req.user._id, followingId: user._id });
-
-        await following.delete();
-
-        res.json(user)
-
-    } catch (error) {
-        next(error)
-    }
-})
-
-// # Profile
-app.post('/profiles/edit', auth, async (req, res, next) => {
-    try {
-        const form = formidable();
-
-        form.parse(req, async (err, fields, files) => {
-            try {
-                const image = files.image;
-                const user = await User.findById(req.user._id);
-
-                // 사용자가 이미지를 업로드하는 경우
-                if (image && image.originalFilename) {
-                    const oldpath = image.filepath;
-                    const ext = image.originalFilename.split('.')[1]
-                    const newName = image.newFilename + '.' + ext;
-                    const newpath = __dirname + '/data/user' + newName;
-
-                    fs.renameSync(oldpath, newpath);
-                    // 유저 이미지 업데이트
-                    user.image = newName;
-                }
-
-                // 유저 bio 업데이트
-                user.bio = fields.bio;
-
-                // 업데이트된 user를 저장
-                await user.save();
-                
-                res.json({ user, fields, files });
-
-            } catch (error) {
-                next(error)
-            }
-        })
-    } catch (error) {
-        next(error)
-    }
-})
-
-app.get('/profiles/:username', async (req, res, next) => {
-    try {
-        const user = await User.findOne({ username: req.params.username });
-        
-        if (!user) {
-            throw new Error('존재하지 않는 사용자입니다')
-        }
-
-        // user에서 username, bio, image로 profile 객체를 만든다.
-        const profile = {
-            username: user.username,
-            bio: user.bio,
-            image: user.image
-        }
-
-        res.json(profile)
-
-    } catch (error) {
-        next(error)
-    }
-})
-
-// # 사용자 검색
-app.get('/users', auth, async (req, res, next) => {
-    try {
-        // 새로운 정규식 패턴을 만든다
-        const patt = new RegExp('^' + req.query.username);
-        // $regex: mongoose에서 정규식을 사용하는 방식
-        const users = await User.find({ username: { $regex: patt } });
-
-        res.json(users)
-    } catch (error) {
-        next(error)
-    }
-})
-
-// # 댓글
-app.post('/articles/:postId/comments', auth, async (req, res, next) => {
-    try {
-        const article = await Article.findById(req.params.postId);
-
-        const comment = new Comment({
-            content: req.body.content,
-            article: req.params.postId,
-            user: req.user._id
-        })
-
-        if (!article) {
-            throw new Error('존재하지 않는 게시물입니다')
-        }
-
-        await comment.save();
-
-        res.json(comment)
-    } catch (error) {
-        next(error)
-    }
-})
-
-app.get('/articles/:postId/comments', auth, async (req, res, next) => {
-    try {
-        const comments = await Comment.find({ article: req.params.postId }).populate('user');
-
-        res.json(comments)
-    } catch (error) {
-        next(error)
-    }
-})
-
-app.delete('/articles/:postId/comments/:commentId', auth, async (req, res, next) => {
-    try {
-        const comment = await Comment.findById(req.params.commentId);
-
-        if (req.user._id.toString() !== comment.user.toString()) {
-            throw new Error('댓글 작성자만 삭제할 수 있습니다')
-        }
-
-        await comment.delete();
-
-        res.json(req.params.commentId)
-
-    } catch (error) {
-        next(error)
-    }
-})
-
-// 에러 핸들러
-app.use((err, req, res, next) => {
-    res.status(500).json({ name: err.name, message: err.message }) // Internal Server Error(500)
-    console.error(err)
-})
-
-app.listen(port, () => {
-    console.log(`${port} 포트에서 실행중..`)
-})
+    // 유효성 검사 통과 후 가입 절차를 진행한다.
+    fetch('http://localhost:3000/users', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newUser)
+    })
+    .then(res => {
+      if (!res.ok) {
+        throw res;
+      }
+      console.log('가입 성공!')
+    })
+    .catch(error => {
+      console.error(error);
+      alert('에러가 발생했습니다. 잠시 후 다시 시도해주세요')
+    });
+  }
+
+  console.log(newUser)
+  console.log(validation)
+
+  if (error) {
+    return <h1>Error!</h1>
+  } 
+  if (!isLoaded) {
+    return <h1>Loading...</h1>
+  }
+  return (
+    <>
+      <h1>Sign Up</h1>
+      <form onSubmit={handleSubmit}>
+        <div className="form-group">
+          <h3>username</h3>
+          <input type="text" name="username" autoComplete="off" onChange={handleChange} />
+          <div>{validation.username.message}</div>
+        </div>
+        <div className="form-group">
+          <h3>email</h3>
+          <input type="text" name="email" autoComplete="off" onChange={handleChange} />
+          <div>{validation.email.message}</div>
+        </div>
+        <div className="form-group">
+          <h3>password</h3>
+          <input type="text" name="password" autoComplete="off" onChange={handleChange} />
+          <div>{validation.password.message}</div>
+        </div>
+        <div className="form-group">
+          <h3>password confirm</h3>
+          <input type="text" name="password_confirm" autoComplete="off" onChange={handleChange} />
+          <div>{validation.passwordConfirm.message}</div>
+        </div>
+        <div className="form-group">
+          <h3>Submit</h3>
+          <button type="submit" className="btn">Submit</button>
+        </div>
+      </form>
+    </>
+  )
+}
+function Login() {
+  console.log('Login Loaded!');
+
+  const navigate = useNavigate();
+  const auth = useContext(AuthContext);
+  const [message, setMessage] = useState(null);
+
+  function handleSubmit(e) {
+    e.preventDefault();
+
+    const formData = new FormData(e.currentTarget);
+
+    fetch('http://localhost:3000/user/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: formData.get('email'),
+        password: formData.get('password')
+      })
+    })
+    .then(res => {
+      if (!res.ok) {
+        throw res;
+      }
+      return res.json()
+    })
+    .then(data => {
+      console.log(data)
+      // 로그인에 실패한 경우 (token이 없을 경우)
+      if (!data.token) {
+        return setMessage(data.message);
+      }
+      // 로그인에 성공한 경우, 브라우저에 jwt을 저장한다
+      localStorage.setItem('jwt', data.token);
+      // 로그인에 성공한 경우 Home으로 이동한다
+      auth.signIn(data.user, () => navigate('/'), { replace: true }) // auth.signIn(callback)
+    })
+    .catch(error => alert('Error!'));
+  }
+
+  return (
+    <>
+      <form onSubmit={handleSubmit}>
+        <h1>Login</h1>
+        <div className="form-group">
+          <input type="text" className="" name="email" defaultValue="bunny@example.com" autoComplete="off" />
+        </div>
+        <div className="form-group">
+          <input type="text" className="" name="password" defaultValue="12345678" autoComplete="off" />
+        </div>
+        <div className="form-group">
+          <button className="">Login</button>
+        </div>
+      </form>
+      <p>{message}</p>
+      <p><Link to="/account/signup">Create account</Link></p>
+    </>
+  )
+}
+function NotFound() {
+  return (
+    <>
+      <h1>404 Not Found</h1>
+    </>
+  )
+}
+ 
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App />);
