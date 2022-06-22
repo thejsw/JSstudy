@@ -191,9 +191,14 @@ function PostView() {
       }),
       fetch(`http://localhost:3000/articles/${postId}/more`)
     ])
-    .then(responses => 
-      Promise.all(responses.map(response => response.json()))
-    )
+    .then(responses => {
+        responses.map(responses => {
+            if (!responses.ok) {
+                throw responses;
+            }
+        })
+        return Promise.all(responses.map(response => response.json()))
+    })
     .then(data => {
       setArticle(data[0])
       setIsFavorite(data[1])
@@ -245,6 +250,15 @@ function PostItem({ article, isFavorite: isFavoriteInitial }) {
   const [isFavorite, setIsFavorite] = useState(isFavoriteInitial);
   const [favoriteCount, setFavoriteCount] = useState(article.favoriteCount);
 
+
+  // Post Carousel
+  const carouselItems = [];
+  const carouselIndicators = [];
+  const prevBtn = useRef(null);
+  const nextBtn = useRef(null);
+  const [left, setleft] = useState(0);
+
+
   function deleteArticle() {
     fetch(`http://localhost:3000/articles/${postId}`, {
       method: 'DELETE',
@@ -292,29 +306,103 @@ function PostItem({ article, isFavorite: isFavoriteInitial }) {
     }
   }
 
+  function setItemRef(ref) {
+    // 여러개로 출력되는 carousel item을 carouselItems array에 추가한다
+    carouselItems.push(ref);
+  }
+  function setIndicatorRef(ref) {
+    // 여러개로 출력되는 carousel dot을 carouselIndicators array에 추가한다
+    carouselIndicators.push(ref)
+  }
+
+  useEffect(() => {
+    // navigateTo 함수가 비동기로 작동해야 하는 이유:
+    // useRef로 컴포넌트가 return할 때 element를 current에 담기 때문
+    navigateTo(left)
+  })
+
+  // carousel을 작동하게 하는 함수
+  function navigateTo(data) {
+    console.log(data)
+    console.log(prevBtn)
+    console.log(nextBtn)
+
+    carouselItems[0].style.marginLeft = `-${100 * data}px`;
+
+    // active는 display: block으로 만든다.
+    prevBtn.current.classList.add('active');
+    nextBtn.current.classList.add('active');
+
+    // 마지막 이미지일 때, 다음 버튼을 안보이게 한다
+    if (data === carouselItems.length - 1) {
+        nextBtn.current.classList.remove('active')
+    }
+    // 첫번째 이미지일 때, 이전 버튼을 안보이게 한다
+    if (data === 0) {
+        prevBtn.current.classList.remove('active')
+    }
+
+    // Indicator
+    // dot에 .active를 모두 제거한다 (초기화)
+    carouselIndicators.map(indicator => {
+        indicator.classList.remove('active');
+    })
+    // index(data)에 해당하는 dot에 .active class를 추가한다
+    carouselIndicators[data].classList.add('active');
+  }
+
   return (
     <>
       <h3>
         <Link to="">{article.author.username}</Link>
       </h3>
+
       <div>
         {article.photos.map((photo, index) => (
-          <div key={index}>
+            // 반복적으로 출력되는 DOM을 선택할 때 Ref를 함수로 작성한다
+          <div key={index} ref={itemRef => setItemRef(itemRef)}>
             <img src={`http://localhost:3000/posts/${photo}`} />
           </div>
         ))}
       </div>
+
+      {/* Carousel Start */}
+      <div className='relative'>
+        <div className='carousel'>
+            {article.photo.map((photo, index) => (
+                <div key={index}>
+                    <img src={`http://localhost:3000/posts/${photo}`}></img>
+                </div>
+            ))}
+        </div>
+
+        <div className='carousel-btn-group'>
+            <button className='prev' onClick={() => setLeft(left - 1)} ref={prevBtn}></button>
+            <button className='next' onClick={() => setLeft(left + 1)} ref={prevBtn}></button>
+        </div>
+
+        <div className='carousel-indicator'>
+            {/* dot은 사진의 개수만큼 출력 */}
+            {article.photos.map((photo, index) => {
+                <span className='dot' key={index} ref={setIndicatorRef}>@</span>
+            })}
+        </div>
+      </div>
+      {/* Carousel End */}
+
       {isMaster &&
         <div>
           <Link to={`/p/${postId}/update`}>수정</Link> {" "} 
           <button onClick={deleteArticle}>삭제</button>
         </div>
       }
+
       <button onClick={handleChange}>
         {!isFavorite ? "좋아요" : "좋아요 취소"}
       </button>
       <p>좋아요: {favoriteCount}</p>
       <p>{article.description}</p>
+
       <p><Link to={`/p/${postId}/comments`}>댓글달기</Link></p>
     </>
   )
