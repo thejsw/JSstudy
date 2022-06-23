@@ -16,6 +16,7 @@ function App() {
             <Route index element={<Home />} />
             <Route path="create" element={<CreateArticle />} />
             <Route path="explore" element={<Explore />} />
+            <Route path="search" element={<Search />} />
             <Route path="/p/:postId">
               <Route index element={<PostView />} />
               <Route path="update" element={<UpdateArticle />} />
@@ -24,6 +25,8 @@ function App() {
             <Route path="/profiles/:username">
               <Route index element={<Profile />} />
               <Route path="edit" element={<ProfileEdit />} />
+              <Route path="follower" element={<followerList />} />
+              <Route path="following" element={<followingList />} />
             </Route>
           </Route>
           {/* 로그인 필요하지 않음 */}
@@ -184,7 +187,7 @@ function PostView() {
   // 순회 가능한 객체(Array)에 주어진 모든 프로미스가 이행된 후,
   // 주어진 프로미스중 하나라도 거부되는 경우 error 발생
   useEffect(() => {
-    setIsLoaded(false)  // 데이터가 불러오기 전에 같은 컴포넌트가 다시 렌더링되는 작업을 방지하기 위한 장치
+    setIsLoaded(false)  // 데이터가 불러오기 전에 같은 컴포넌트가 다시 렌더링되는 작업을 방지하기 위한 장치 > useState에서 true로 다시 바뀌기 때문에 false로 바꿔줘야 함
 
     Promise.all([
       fetch(`http://localhost:3000/articles/${postId}`),
@@ -207,7 +210,7 @@ function PostView() {
       setArticles(data[2])
     })
     .catch(error => setError(error))
-    .finally(() => setIsLoaded(true))
+    .finally(() => setIsLoaded(true)) // 에러 유무와 상관없이 진행 > useState가 true인 상태
   }, [postId])
   // postId가 바뀔 때 useEffect가 effect(callback)을 다시 호출한다
 
@@ -611,9 +614,18 @@ function Profile() {
 
       <div>
         <ul>
-          <li><b>Follower</b> {followerList.length}</li>
-          <li><b>Following</b> {followingList.length}</li>
-          <li><b>Posts</b> {articles.length}</li>
+          <li>
+            <Link to={`/profiles/'${username}/follower`}>Follower</Link> 
+            {followerList.length}
+          </li>
+          <li>
+            <Link to={`/profiles/'${username}/follower`}>Following</Link> 
+            {followingList.length}
+          </li>
+          <li>
+            <Link to={`/profiles/'${username}/follower`}>Posts</Link> 
+            {articles.length}
+          </li>
         </ul>
       </div>
 
@@ -726,6 +738,96 @@ function ProfileEdit() {
   )
 }
 
+function FollowingList() {
+  console.log('FollowingList Loaded!');
+
+  const params = useParams();
+  const [error, setError] = useState(null);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [followingList, setFollowingList] = useState([]);
+
+  useEffect(() => {
+    fetch(`http://localhost:3000/profiles/${params.username}/followingList`, {
+      headers: {'Authorization': 'Bearer' + localStorage.getItem('jwt')}
+    })
+    .then(res => {
+      if (!res.ok) {
+        throw res;
+      }
+      return res.json()
+    })
+    .then(data => setFollowingList(data))
+    .catch(error => setError(error))
+    .finally(() => setIsLoaded(true))
+  }, [])
+
+  console.log(followingList)
+
+  if (error) {
+    return <h1>Error!</h1>
+  }
+  if (!isLoaded) {
+    return <h1>Loading...</h1>
+  }
+  return (
+    <>
+      <h1>FollowingList</h1>
+      <ul>
+        {followingList.map((following, index) => (
+          <li key={index}>
+            <Link to={`profiles/'${following.followingId.username}`}>${following.followingId.username}</Link>
+          </li>
+        ))}
+      </ul>
+    </>
+  )
+}
+
+function FollowerList() {
+  console.log('FollowerList Loaded!');
+
+  const params = useParams();
+  const [error, setError] = useState(null);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [followerList, setFollowerList] = useState([]);
+
+  useEffect(() => {
+    fetch(`http://localhost:3000/profiles/${params.username}/followerList`, {
+      headers: {'Authorization': 'Bearer' + localStorage.getItem('jwt')}
+    })
+    .then(res => {
+      if (!res.ok) {
+        throw res;
+      }
+      return res.json()
+    })
+    .then(data => setFollowerList(data))
+    .catch(error => setError(error))
+    .finally(() => setIsLoaded(true))
+  }, [])
+
+  console.log(followerList)
+
+  if (error) {
+    return <h1>Error!</h1>
+  }
+  if (!isLoaded) {
+    return <h1>Loading...</h1>
+  }
+  return (
+    <>
+      <h1>FollowerList</h1>
+      <ul>
+        {followerList.map((follower, index) => (
+          <li key={index}>
+            <Link to={`profiles/'${follower.followerId.username}`}>${follower.followerId.username}</Link>
+          </li>
+        ))}
+      </ul>
+    </>
+  )
+}
+
 function Explore() {
   console.log('Explore Loaded!');
 
@@ -766,6 +868,57 @@ function Explore() {
           </div>
         )}
       </div>
+    </>
+  )
+}
+
+function Search() {
+  console.log('Search Loaded!');
+
+  const [word, setWord] = useState("");
+  const [error, setError] = useState(null);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    fetch(`http://localhost:3000/users/username/${word}`, {
+      headers: {'Authorization': 'Bearer' + localStorage.getItem('jwt')}
+    })
+    .then(res => {
+      if (!res.ok) {
+        throw res;
+      }
+      return res.json()
+    })
+    .then(data => setUsers(data))
+    .catch(error => setError(error))
+    .finally(() => setIsLoaded(true))
+  }, [word]) // Dependency
+
+  function handleChange(e) {
+    setWord(e.currentTarget.value) // 입력창의 값이 달라질 때마다 handleChange 함수 호출 > 자동완성 기능
+  }
+  console.log(word)
+
+
+  if (error) {
+    return <h1>Error!</h1>
+  }
+  if (!isLoaded) {
+    return <h1>Loading...</h1>
+  }
+  return (
+    <>
+      <form>
+        <input type="text" onChange={handleChange} value={word}/>
+      </form>
+      <ul>
+        {users.map((user, index) => (
+          <li key={index}>
+            <Link to={`profiles/${user.username}`}>${user.username}</Link>
+          </li>
+        ))}
+      </ul>
     </>
   )
 }
