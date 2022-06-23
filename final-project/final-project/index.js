@@ -536,7 +536,7 @@ function Profile() {
       fetch(`http://localhost:3000/articles?username=${username}`)
     ])
     .then(responses => { 
-      // status 200만 받는다 (ok: true)
+      //// status 200만 받을 때 > 이미지 오류
       responses.map(response => {
         if (!response.ok) { 
           throw response;
@@ -561,9 +561,9 @@ function Profile() {
   function handleFollow(e) {
     e.preventDefault();
 
-    if (!isFollowing) { // 새롭게 팔로우를 시작함
+    if (!isFollowing) { // 팔로잉 하지 않았을 때 > 팔로우를 시작함
       fetch(`http://localhost:3000/profiles/${username}/follow`, {
-        method: 'POST',
+        method: 'POST',  // POST 메소드 사용
         headers: { 'Authorization': `Bearer ${localStorage.getItem('jwt')}` }
       })
       .then(res => {
@@ -571,19 +571,19 @@ function Profile() {
           throw res;
         }
         // return res.json() 가 생략됬다 
-        setIsFollowing(true);
+        setIsFollowing(true);  // true(팔로우)
       })
       .catch(error => setError(error))
-    } else { // 팔로우를 취소함
+    } else { // 팔로잉을 하고 있을 때 > 팔로우를 취소함
       fetch(`http://localhost:3000/profiles/${username}/follow`, {
-        method: 'DELETE',
+        method: 'DELETE',  // DELETE 메소드 사용
         headers: { 'Authorization': `Bearer ${localStorage.getItem('jwt')}` }
       })
       .then(res => {
         if (!res.ok) {
           throw res;
         }
-        setIsFollowing(false);
+        setIsFollowing(false);  // false(언팔로우)
       })
       .catch(error => setError(error))
     }
