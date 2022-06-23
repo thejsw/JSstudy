@@ -184,6 +184,8 @@ function PostView() {
   // 순회 가능한 객체(Array)에 주어진 모든 프로미스가 이행된 후,
   // 주어진 프로미스중 하나라도 거부되는 경우 error 발생
   useEffect(() => {
+    setIsLoaded(false)  // 데이터가 불러오기 전에 같은 컴포넌트가 다시 렌더링되는 작업을 방지하기 위한 장치
+
     Promise.all([
       fetch(`http://localhost:3000/articles/${postId}`),
       fetch(`http://localhost:3000/articles/${postId}/favorite`, {
