@@ -165,6 +165,12 @@ function Home() {
   return (
     <>
       <h1>Home</h1>
+      {articles.map((article, index) => {
+        <div key={index}>
+          {/* PostItem 컴포넌트를 반복적으로 return 한다 */}
+          <PostItem article={article} isFavorite={false}/>
+        </div>
+      })}
     </>
   )
 }
