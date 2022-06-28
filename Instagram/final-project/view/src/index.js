@@ -25,8 +25,8 @@ function App() {
             <Route path="/profiles/:username">
               <Route index element={<Profile />} />
               <Route path="edit" element={<ProfileEdit />} />
-              <Route path="follower" element={<followerList />} />
-              <Route path="following" element={<followingList />} />
+              <Route path="follower" element={<FollowerList />} />
+              <Route path="following" element={<FollowingList />} />
             </Route>
           </Route>
           {/* 로그인 필요하지 않음 */}
@@ -161,16 +161,22 @@ function Home() {
   }, [])
 
   console.log(articles)
-
+  
+  if(error) {
+    return <h1>Error!</h1>
+  } 
+  if (!isLoaded) {
+    return <h1>Loading...</h1>
+  }
   return (
     <>
       <h1>Home</h1>
-      {articles.map((article, index) => {
+      {articles.map((article, index) => (
         <div key={index}>
-          {/* PostItem 컴포넌트를 반복적으로 return 한다 */}
-          <PostItem article={article} isFavorite={false}/>
+          {/* PostItem 컴포넌트를 반복적으로 return한다 */}
+          <PostItem article={article} isFavorite={article.isFavorite} />
         </div>
-      })}
+      ))}
     </>
   )
 }
@@ -189,11 +195,13 @@ function PostView() {
   const [isFavorite, setIsFavorite] = useState(null);
   const [articles, setArticles] = useState([]);
 
+  console.log(isLoaded)
 
   // 순회 가능한 객체(Array)에 주어진 모든 프로미스가 이행된 후,
   // 주어진 프로미스중 하나라도 거부되는 경우 error 발생
   useEffect(() => {
-    setIsLoaded(false)  // 데이터가 불러오기 전에 같은 컴포넌트가 다시 렌더링되는 작업을 방지하기 위한 장치 > useState에서 true로 다시 바뀌기 때문에 false로 바꿔줘야 함
+    // 컴포넌트가 다시 렌더링이 될 때 isLoaded를 false로 한다
+    setIsLoaded(false);
 
     Promise.all([
       fetch(`http://localhost:3000/articles/${postId}`),
@@ -216,7 +224,7 @@ function PostView() {
       setArticles(data[2])
     })
     .catch(error => setError(error))
-    .finally(() => setIsLoaded(true)) // 에러 유무와 상관없이 진행 > useState가 true인 상태
+    .finally(() => setIsLoaded(true))
   }, [postId])
   // postId가 바뀔 때 useEffect가 effect(callback)을 다시 호출한다
 
@@ -547,7 +555,7 @@ function Profile() {
       fetch(`http://localhost:3000/articles?username=${username}`)
     ])
     .then(responses => { 
-      //// status 200만 받을 때 > 이미지 오류
+      // status 200만 받는다 (ok: true)
       responses.map(response => {
         if (!response.ok) { 
           throw response;
@@ -572,9 +580,9 @@ function Profile() {
   function handleFollow(e) {
     e.preventDefault();
 
-    if (!isFollowing) { // 팔로잉 하지 않았을 때 > 팔로우를 시작함
+    if (!isFollowing) { // 새롭게 팔로우를 시작함
       fetch(`http://localhost:3000/profiles/${username}/follow`, {
-        method: 'POST',  // POST 메소드 사용
+        method: 'POST',
         headers: { 'Authorization': `Bearer ${localStorage.getItem('jwt')}` }
       })
       .then(res => {
@@ -582,19 +590,19 @@ function Profile() {
           throw res;
         }
         // return res.json() 가 생략됬다 
-        setIsFollowing(true);  // true(팔로우)
+        setIsFollowing(true);
       })
       .catch(error => setError(error))
-    } else { // 팔로잉을 하고 있을 때 > 팔로우를 취소함
+    } else { // 팔로우를 취소함
       fetch(`http://localhost:3000/profiles/${username}/follow`, {
-        method: 'DELETE',  // DELETE 메소드 사용
+        method: 'DELETE',
         headers: { 'Authorization': `Bearer ${localStorage.getItem('jwt')}` }
       })
       .then(res => {
         if (!res.ok) {
           throw res;
         }
-        setIsFollowing(false);  // false(언팔로우)
+        setIsFollowing(false);
       })
       .catch(error => setError(error))
     }
@@ -621,17 +629,17 @@ function Profile() {
       <div>
         <ul>
           <li>
-            <Link to={`/profiles/'${username}/follower`}>Follower</Link> 
+            <Link to={`/profiles/${username}/follower`}>Follower</Link> 
             {followerList.length}
           </li>
           <li>
-            <Link to={`/profiles/'${username}/follower`}>Following</Link> 
+            <Link to={`/profiles/${username}/following`}>Following</Link> 
             {followingList.length}
           </li>
           <li>
-            <Link to={`/profiles/'${username}/follower`}>Posts</Link> 
+            <b>Posts</b> 
             {articles.length}
-          </li>
+            </li>
         </ul>
       </div>
 
@@ -745,16 +753,17 @@ function ProfileEdit() {
 }
 
 function FollowingList() {
-  console.log('FollowingList Loaded!');
+  console.log('FollowngList Loaded!');
 
   const params = useParams();
+
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [followingList, setFollowingList] = useState([]);
 
   useEffect(() => {
     fetch(`http://localhost:3000/profiles/${params.username}/followingList`, {
-      headers: {'Authorization': 'Bearer' + localStorage.getItem('jwt')}
+      headers: { 'Authorization': 'Bearer ' + localStorage.getItem('jwt') }
     })
     .then(res => {
       if (!res.ok) {
@@ -777,11 +786,11 @@ function FollowingList() {
   }
   return (
     <>
-      <h1>FollowingList</h1>
+      <h1>Following List</h1>
       <ul>
         {followingList.map((following, index) => (
           <li key={index}>
-            <Link to={`profiles/'${following.followingId.username}`}>${following.followingId.username}</Link>
+            <Link to={`/profiles/${following.followingId.username}`}>{following.followingId.username}</Link>
           </li>
         ))}
       </ul>
@@ -793,13 +802,14 @@ function FollowerList() {
   console.log('FollowerList Loaded!');
 
   const params = useParams();
+
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [followerList, setFollowerList] = useState([]);
 
   useEffect(() => {
     fetch(`http://localhost:3000/profiles/${params.username}/followerList`, {
-      headers: {'Authorization': 'Bearer' + localStorage.getItem('jwt')}
+      headers: { 'Authorization': 'Bearer ' + localStorage.getItem('jwt') }
     })
     .then(res => {
       if (!res.ok) {
@@ -822,11 +832,11 @@ function FollowerList() {
   }
   return (
     <>
-      <h1>FollowerList</h1>
+      <h1>Following List</h1>
       <ul>
         {followerList.map((follower, index) => (
           <li key={index}>
-            <Link to={`profiles/'${follower.followerId.username}`}>${follower.followerId.username}</Link>
+            <Link to={`/profiles/${follower.followerId.username}`}>{follower.followerId.username}</Link>
           </li>
         ))}
       </ul>
@@ -865,6 +875,7 @@ function Explore() {
   return (
     <>
       <h1>Explore</h1>
+      <p><Link to="/search">Search</Link></p>
       <div>
         {articles.map((article, index) => 
           <div key={index} style={{ display: 'inline-block' }}>
@@ -887,25 +898,28 @@ function Search() {
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    fetch(`http://localhost:3000/users/username/${word}`, {
-      headers: {'Authorization': 'Bearer' + localStorage.getItem('jwt')}
+    // setIsLoaded(false)
+
+    // word (검색어)가 업데이트 될 때마다 서버에 요청을 보낸다.
+    fetch(`http://localhost:3000/users?username=${word}`, {
+      headers: { 'Authorization': 'Bearer ' + localStorage.getItem('jwt') }
     })
     .then(res => {
       if (!res.ok) {
         throw res;
       }
-      return res.json()
+      return res.json();
     })
     .then(data => setUsers(data))
     .catch(error => setError(error))
     .finally(() => setIsLoaded(true))
-  }, [word]) // Dependency
+  }, [word])
 
   function handleChange(e) {
-    setWord(e.currentTarget.value) // 입력창의 값이 달라질 때마다 handleChange 함수 호출 > 자동완성 기능
+    setWord(e.currentTarget.value)
   }
+  
   console.log(word)
-
 
   if (error) {
     return <h1>Error!</h1>
@@ -916,17 +930,18 @@ function Search() {
   return (
     <>
       <form>
-        <input type="text" onChange={handleChange} value={word}/>
+        <input type="text" onChange={handleChange} value={word} />
       </form>
       <ul>
         {users.map((user, index) => (
           <li key={index}>
-            <Link to={`profiles/${user.username}`}>${user.username}</Link>
+            <Link to={`/profiles/${user.username}`}>{user.username}</Link>
           </li>
         ))}
       </ul>
     </>
   )
+
 }
 
 function UpdateArticle() {
