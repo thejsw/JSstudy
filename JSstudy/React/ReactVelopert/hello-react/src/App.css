@@ -1,0 +1,14 @@
+body {
+  margin: 100px;
+}
+
+.react {
+    display: flex;
+    justify-content: center;
+    padding: 16px;
+    padding-left: 16px;
+    background-color: black;
+    color: aqua;
+    font-size: 36px;
+    font-weight: bold;
+}
