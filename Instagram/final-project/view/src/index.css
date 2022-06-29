@@ -1,35 +1,119 @@
-body {
-  padding: 50px;
+:root {
+  --primary: #046efd;
+  --danger: #dc3545;
 }
 
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-size: 16px;
+}
+
+/* img */
 img {
-  width: 100px;
-  height: 100px;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
 }
 
-.carousel {
-  white-space: nowrap;
+.btn-link {
+  cursor: pointer;
+  border: none;
+  background-color: transparent;
 }
 
-.carousel div {
-  display: inline-block;
-  transition: .5s;
+/* grid */
+.grid {
+  display: grid;
+  grid-template-columns: 100px 100px 100px;
 }
 
-.carousel-btn-group button {
-  visibility: hidden;
+/* position */
+.fixed-bottom {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  z-index: 1;
 }
 
-.carousel-btn-group button.active {
-  visibility: visible;
+/* margin */
+.mx-auto {
+  margin: auto;
 }
 
-.carousel-indicator {
+.mt-3 {
+  margin-top: 1em;
+}
+
+/* padding */
+.PY-3 {
+  padding-top: 1em;
+  padding-bottom: 1em;
+}
+
+.pb-5 {
+  padding-bottom: 3em;
+}
+
+/* border */
+.border-bottom {
+  border-bottom: 1px solid #ddd;
+}
+
+/* flex */
+.flex {
   display: flex;
+}
+
+.flex-equal > * {
+  /* flex item을 선택한다 */
+  /* flex-grow: flex item들이 같은 넓이를 갖고, flex container를 꽉채움 같은 비율로 */
+  flex-grow: 1; 
+}
+
+.justify-content-center {
   justify-content: center;
 }
 
-.dot.active {
-  color: red;
+.justify-content-between {
+  justify-content: space-between;
+}
+
+/* background */
+.bg-white {
+  background-color: white;
+}
+
+/* font */
+.fs-3 {
+  font-size: 1.17em!important;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-small {
+  font-size: smaller;
+}
+
+.text-secondary {
+  color: #888;
+}
+
+.text-danger {
+  color: #dc3545;
+}
+
+/* others */
+.profile-image {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  overflow: hidden;
 }

@@ -1,0 +1,13 @@
+
+- 리액트 2~3회독 하기 - 리액트를 다루는 기술
+- ES6 2~3회독 하기 - 코어 자바스크립트
+- 기획, UX/UI 독서 하기 - 린 스타트업, 린 UX, 사용자를 생각하게 하지마 // 와이어프레임, 스토리보드, Figma 프로토타입 등등
+- 사이드 프로젝트 두 개 이상 하기 - 1. 가벼운 게시판, 2. 백엔드 협업 프로젝트
+- 알고리즘 공부 - 파이썬
+
++ 리액트 라이브러리 심화 공부, CS 면접 준비
++ 타입스크립트, 리액트 네이티브, Node.js, Vue.js 공부하기
+
+> HTML,CSS JS ES6 React Redux TypeScript
+> 기획, UX/UI, BE-Node.JS, Mobile-React Native
+> Algorithm, DB, Network, Server ...
