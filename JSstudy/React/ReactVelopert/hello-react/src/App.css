@@ -2,7 +2,7 @@ body {
   margin: 100px;
 }
 
-.react {
+/* .react {
     display: flex;
     justify-content: center;
     padding: 16px;
@@ -11,4 +11,14 @@ body {
     color: aqua;
     font-size: 36px;
     font-weight: bold;
+} */
+
+.state {
+  font-size: 24px;
+}
+
+.btn button {
+  font-size: 16px;
+  height: 50px;
+  width: 100px;
 }
