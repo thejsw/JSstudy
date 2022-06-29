@@ -1,7 +1,7 @@
-import Counter from "./study/ch2_Counter";
+import Say from "./study/ch3_Say";
 
 const App = () => {
-  return <Counter></Counter>;
+  return <Say></Say>;
 };
 
 export default App;
