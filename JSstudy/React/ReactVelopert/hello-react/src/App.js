@@ -21,7 +21,7 @@
 import MyComponent from "./study/ch1_MyComponent";
 
 const App = () => {
-  return <MyComponent name={3}>리액트</MyComponent>;
+  return <MyComponent name={"조성원"}></MyComponent>;
 };
 
 export default App;
