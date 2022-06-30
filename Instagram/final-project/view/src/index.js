@@ -331,6 +331,13 @@ function PostItem({ article, isFavorite: isFavoriteInitial }) {
   const [left, setLeft] = useState(0);
 
   function deleteArticle() {
+    let res = window.confirm("삭제하시겠습니까?");
+
+    if (!res) {
+      // 취소버튼을 누르면 dropdown이 다시 숨겨진다
+      return setDropdownActive(false);
+    }
+
     fetch(`http://localhost:3000/articles/${postId}`, {
       method: "DELETE",
       headers: { Authorization: "Bearer " + localStorage.getItem("jwt") },
@@ -429,6 +436,19 @@ function PostItem({ article, isFavorite: isFavoriteInitial }) {
     carouselIndicators[data].classList.add("active");
   }
 
+  const dropdownContent = (
+    <ul>
+      <li>
+        <Link to={`/p/${postId}/update`}>수정</Link>
+      </li>
+      <li>
+        <button className="btn-link" onClick={deleteArticle}>
+          삭제
+        </button>
+      </li>
+    </ul>
+  );
+
   return (
     <>
       {/* User avatar & 더보기 버튼 */}
@@ -520,9 +540,16 @@ function PostItem({ article, isFavorite: isFavoriteInitial }) {
       {/* Description */}
       <div>
         <p>좋아요 {favoriteCount}개</p>
-        <p>{article.description}</p>
+        <p className="pre-line">{article.description}</p>
         <small className="text-secondary">{article.created}</small>
       </div>
+
+      {/* Dropdown */}
+      <Dropdown
+        active={dropdownActive}
+        setActive={setDropdownActive}
+        content={dropdownContent}
+      />
     </>
   );
 }
@@ -532,10 +559,13 @@ function Comments() {
 
   const params = useParams();
   const postId = params.postId;
+  const auth = useContext(AuthContext);
 
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [comments, setComments] = useState([]);
+
+  const [dropdownActive, setDropdownActive] = useState(false);
 
   const inputEl = useRef(null);
 
@@ -600,6 +630,17 @@ function Comments() {
       .catch((error) => alert(error));
   }
 
+  function showDropdown(commentId) {
+    console.log(commentId);
+    setDropdownActive(true);
+  }
+
+  const dropdownContent = (
+    <button className="btn-link" onClick={() => deleteComment(commentId)}>
+      삭제
+    </button>
+  );
+
   if (error) {
     return <h1>Error!</h1>;
   }
@@ -627,12 +668,41 @@ function Comments() {
 
       <ul>
         {comments.map((comment, index) => (
-          <li key={index}>
-            {comment.content}{" "}
-            <span onClick={() => deleteComment(comment._id)}>&times;</span>
+          <li key={index} className="my-3">
+            <div className="flex justify-content-between">
+              <div className="flex">
+                <div className="avatar">
+                  <img
+                    src={`http://localhost:3000/user/${comment.user.image}`}
+                  ></img>
+                </div>
+                <div className="flex align-center ms-1">
+                  <Link to={`/profiles/${comment.user.username}`}>
+                    {comment.user.image}
+                  </Link>
+                </div>
+              </div>
+              {/* 더보기 버튼 */}
+              <div className="flex align-center">
+                {comment.user._id === auth.user._id && (
+                  <button className="btn-link" onClick={() => showDropdown}>
+                    <FontAwesomeIcon icon={faEllipsisVertical} />
+                  </button>
+                )}
+              </div>
+            </div>
+            {/* 댓글 내용 */}
+            <p className="">{comment.content}</p>
+            <small className="text-secondary">{comment.created}</small>
           </li>
         ))}
       </ul>
+      {/* Dropdown */}
+      <Dropdown
+        active={dropdownActive}
+        setActive={setDropdownActive}
+        content=".."
+      />
     </>
   );
 }
@@ -754,7 +824,7 @@ function Profile() {
       {/* bio */}
       <div>
         <h3>{profile.username}</h3>
-        <p>{profile.bio}</p>
+        <p className="pre-line">{profile.bio}</p>
         {isMaster && (
           <>
             <p>
@@ -825,6 +895,8 @@ function ProfileEdit() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [profile, setProfile] = useState({});
 
+  const textAreaE1 = useRef();
+
   useEffect(() => {
     fetch(`http://localhost:3000/profiles/${auth.user.username}`)
       .then((res) => {
@@ -886,6 +958,12 @@ function ProfileEdit() {
             className="w-100"
             defaultValue={profile.bio}
           />
+          <textarea
+            className="w-100"
+            rows="1"
+            name="bio"
+            defaultValue={profile.bio}
+          ></textarea>
         </div>
         <div className="form-group">
           <h3>Submit</h3>
@@ -1121,6 +1199,8 @@ function UpdateArticle() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [article, setArticle] = useState(null);
 
+  const textAreaE1 = useRef(null);
+
   useEffect(() => {
     fetch(`http://localhost:3000/articles/${postId}`)
       .then((res) => {
@@ -1148,9 +1228,21 @@ function UpdateArticle() {
         }
         return res.json();
       })
-      .then(() => navigate(`/p/${postId}`))
+      .then(() => navigate(`/`))
       .catch((error) => alert(error));
   }
+
+  function handleTextArea() {
+    // line break (줄바꿈)
+    let lb = textAreaE1.current.value.match(/\n/g);
+    textAreaE1.current.rows = lb ? 1(lb.length) + 1 : 1;
+  }
+
+  useEffect(() => {
+    if (isLoaded) {
+      handleTextArea();
+    }
+  });
 
   if (error) {
     return <h1>Error!</h1>;
@@ -1158,17 +1250,21 @@ function UpdateArticle() {
   if (!isLoaded) {
     return <h1>Loading...</h1>;
   }
+
   return (
     <>
       <h1>Update Article</h1>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <h3>Description</h3>
-          <input
-            type="text"
+          <textarea
             name="description"
+            rows="1"
+            className="w-100"
+            ref={textAreaE1}
             defaultValue={article.description}
-          />
+            onChange={handleTextArea}
+          ></textarea>
         </div>
         <div className="form-group">
           <h3>Photos</h3>
@@ -1187,6 +1283,7 @@ function CreateArticle() {
   console.log("CreateArticle Loaded!");
 
   const navigate = useNavigate();
+  const textAreaE1 = useRef(null);
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -1206,6 +1303,12 @@ function CreateArticle() {
         navigate("/");
       })
       .catch((error) => alert("Error!"));
+  }
+
+  function handleTextArea() {
+    console.log(textAreaE1.current.value);
+    // \n : meta character. 줄바꿈 표시
+    console.log(textAreaE1.current.value.match(/\n/g));
   }
 
   return (
@@ -1451,6 +1554,38 @@ function Login() {
     </>
   );
 }
+
+function Dropdown({ active, setActive, content }) {
+  console.log("Dropdown Loaded!");
+
+  const dropdownE1 = useRef(null);
+  const modalE1 = useRef(null);
+
+  useEffect(() => {
+    if (active) {
+      // scrollHeight
+      dropdownE1.current.style.height = dropdownE1.current.scrollHeight + "px";
+      modalE1.current.classList.add("active");
+    } else {
+      dropdownE1.current.style.height = 0;
+      modalE1.current.classList.remove("active");
+    }
+  });
+
+  return (
+    <>
+      <div
+        className="dropdown"
+        ref={modalE1}
+        style={{ backgroundColor: "#888" }}
+      ></div>
+      <div className="dropdown" ref={dropdownE1}>
+        <div className="p-3">{content}</div>
+      </div>
+    </>
+  );
+}
+
 function NotFound() {
   return (
     <>
