@@ -22,6 +22,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faHeart,
   faPen,
+  faPow,
   faMagnifyingGlass,
   faDog,
   faCompass,
@@ -330,6 +331,8 @@ function PostItem({ article, isFavorite: isFavoriteInitial }) {
   const nextBtn = useRef(null);
   const [left, setLeft] = useState(0);
 
+  const [dropdownActive, setDropdownActive] = useState(false);
+
   function deleteArticle() {
     let res = window.confirm("삭제하시겠습니까?");
 
@@ -466,7 +469,7 @@ function PostItem({ article, isFavorite: isFavoriteInitial }) {
         </div>
         {/* 더보기 버튼 */}
         {isMaster && (
-          <button className="btn-link">
+          <button className="btn-link" onClick={() => setDropdownActive(true)}>
             <FontAwesomeIcon icon={faEllipsisVertical} />
           </button>
         )}
@@ -509,13 +512,6 @@ function PostItem({ article, isFavorite: isFavoriteInitial }) {
           <span className="dot" key={index} ref={setIndicatorRef}></span>
         ))}
       </div>
-
-      {/* {isMaster &&
-        <div>
-          <Link to={`/p/${postId}/update`}>수정</Link> {" "} 
-          <button onClick={deleteArticle}>삭제</button>
-        </div>
-      } */}
 
       {/* 좋아요 & 댓글달기 아이콘 */}
       <div className="flex">
@@ -636,7 +632,7 @@ function Comments() {
   }
 
   const dropdownContent = (
-    <button className="btn-link" onClick={() => deleteComment(commentId)}>
+    <button className="btn-link" onClick={() => deleteComment(null)}>
       삭제
     </button>
   );
@@ -670,22 +666,26 @@ function Comments() {
         {comments.map((comment, index) => (
           <li key={index} className="my-3">
             <div className="flex justify-content-between">
+              {/* avatar image and username */}
               <div className="flex">
                 <div className="avatar">
                   <img
                     src={`http://localhost:3000/user/${comment.user.image}`}
-                  ></img>
+                  />
                 </div>
                 <div className="flex align-center ms-1">
                   <Link to={`/profiles/${comment.user.username}`}>
-                    {comment.user.image}
+                    {comment.user.username}
                   </Link>
                 </div>
               </div>
               {/* 더보기 버튼 */}
               <div className="flex align-center">
                 {comment.user._id === auth.user._id && (
-                  <button className="btn-link" onClick={() => showDropdown}>
+                  <button
+                    className="btn-link"
+                    onClick={() => showDropdown(comment._id)}
+                  >
                     <FontAwesomeIcon icon={faEllipsisVertical} />
                   </button>
                 )}
@@ -701,7 +701,7 @@ function Comments() {
       <Dropdown
         active={dropdownActive}
         setActive={setDropdownActive}
-        content=".."
+        content={dropdownContent}
       />
     </>
   );
@@ -895,7 +895,7 @@ function ProfileEdit() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [profile, setProfile] = useState({});
 
-  const textAreaE1 = useRef();
+  const textAreaEl = useRef(null);
 
   useEffect(() => {
     fetch(`http://localhost:3000/profiles/${auth.user.username}`)
@@ -932,6 +932,17 @@ function ProfileEdit() {
       });
   }
 
+  function handleTextArea() {
+    let lb = textAreaEl.current.value.match(/\n/g);
+    textAreaEl.current.rows = lb ? lb.length + 1 : 1;
+  }
+
+  useEffect(() => {
+    if (isLoaded) {
+      handleTextArea();
+    }
+  });
+
   if (error) {
     return <h1>Error!</h1>;
   }
@@ -952,18 +963,14 @@ function ProfileEdit() {
         </div>
         <div className="form-group">
           <h3>Bio</h3>
-          <input
-            type="text"
-            name="bio"
-            className="w-100"
-            defaultValue={profile.bio}
-          />
           <textarea
             className="w-100"
             rows="1"
             name="bio"
             defaultValue={profile.bio}
-          ></textarea>
+            ref={textAreaEl}
+            onChange={handleTextArea}
+          />
         </div>
         <div className="form-group">
           <h3>Submit</h3>
@@ -1199,7 +1206,7 @@ function UpdateArticle() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [article, setArticle] = useState(null);
 
-  const textAreaE1 = useRef(null);
+  const textAreaEl = useRef(null);
 
   useEffect(() => {
     fetch(`http://localhost:3000/articles/${postId}`)
@@ -1228,17 +1235,17 @@ function UpdateArticle() {
         }
         return res.json();
       })
-      .then(() => navigate(`/`))
+      .then(() => navigate(`/p/${postId}`))
       .catch((error) => alert(error));
   }
 
   function handleTextArea() {
-    // line break (줄바꿈)
-    let lb = textAreaE1.current.value.match(/\n/g);
-    textAreaE1.current.rows = lb ? 1(lb.length) + 1 : 1;
+    let lb = textAreaEl.current.value.match(/\n/g);
+    textAreaEl.current.rows = lb ? lb.length + 1 : 1;
   }
 
   useEffect(() => {
+    // 처음 로드되었을 때 textarea rows를 조절한다
     if (isLoaded) {
       handleTextArea();
     }
@@ -1250,7 +1257,6 @@ function UpdateArticle() {
   if (!isLoaded) {
     return <h1>Loading...</h1>;
   }
-
   return (
     <>
       <h1>Update Article</h1>
@@ -1261,10 +1267,10 @@ function UpdateArticle() {
             name="description"
             rows="1"
             className="w-100"
-            ref={textAreaE1}
+            ref={textAreaEl}
             defaultValue={article.description}
             onChange={handleTextArea}
-          ></textarea>
+          />
         </div>
         <div className="form-group">
           <h3>Photos</h3>
@@ -1272,7 +1278,9 @@ function UpdateArticle() {
         </div>
         <div className="form-group">
           <h3>Submit</h3>
-          <button type="submit">Submit</button>
+          <button type="submit" className="btn">
+            Submit
+          </button>
         </div>
       </form>
     </>
@@ -1283,7 +1291,7 @@ function CreateArticle() {
   console.log("CreateArticle Loaded!");
 
   const navigate = useNavigate();
-  const textAreaE1 = useRef(null);
+  const textAreaEl = useRef(null);
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -1306,9 +1314,10 @@ function CreateArticle() {
   }
 
   function handleTextArea() {
-    console.log(textAreaE1.current.value);
-    // \n : meta character. 줄바꿈 표시
-    console.log(textAreaE1.current.value.match(/\n/g));
+    // line break (줄바꿈)
+    let lb = textAreaEl.current.value.match(/\n/g);
+
+    textAreaEl.current.rows = lb ? lb.length + 1 : 1;
   }
 
   return (
@@ -1316,7 +1325,13 @@ function CreateArticle() {
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <h3>Description</h3>
-          <input type="text" className="w-100" name="description" />
+          <textarea
+            name="description"
+            rows="1"
+            className="w-100"
+            ref={textAreaEl}
+            onChange={handleTextArea}
+          />
         </div>
         <div className="form-group">
           <h3>Photos</h3>
@@ -1558,28 +1573,28 @@ function Login() {
 function Dropdown({ active, setActive, content }) {
   console.log("Dropdown Loaded!");
 
-  const dropdownE1 = useRef(null);
-  const modalE1 = useRef(null);
+  const dropdownEl = useRef(null);
+  const modalEl = useRef(null);
 
   useEffect(() => {
     if (active) {
-      // scrollHeight
-      dropdownE1.current.style.height = dropdownE1.current.scrollHeight + "px";
-      modalE1.current.classList.add("active");
+      // scrollHeight값(readonly)은 변하지 않는다.
+      dropdownEl.current.style.height = dropdownEl.current.scrollHeight + "px";
+      modalEl.current.classList.add("active");
     } else {
-      dropdownE1.current.style.height = 0;
-      modalE1.current.classList.remove("active");
+      dropdownEl.current.style.height = 0;
+      modalEl.current.classList.remove("active");
     }
   });
 
   return (
     <>
       <div
-        className="dropdown"
-        ref={modalE1}
-        style={{ backgroundColor: "#888" }}
+        className="modal"
+        ref={modalEl}
+        onClick={() => setActive(false)}
       ></div>
-      <div className="dropdown" ref={dropdownE1}>
+      <div className="dropdown" ref={dropdownEl}>
         <div className="p-3">{content}</div>
       </div>
     </>
