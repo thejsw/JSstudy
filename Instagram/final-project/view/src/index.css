@@ -1,34 +1,46 @@
+/* Intialize */
 :root {
-  --primary: #046efd;
+  /* CSS에서 변수를 사용한다 */
+  /* 변수명: 변수 값 */
+  --primary: #0d6efd;
+  --success: #28a745;
   --danger: #dc3545;
 }
-
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
-
 body {
-  font-size: 16px;
-}
+  /* 기본값 */
+  /* font-size: normal; */
+  /* font-size: 16px; */
 
+  /* 전체적으로 font-size가 줄어든다 */
+  font-size: smaller;
+  /* font-size: 13.3333px */
+}
 h1,
 h2,
 h3,
 h4,
 h5,
 p {
-  margin: 0.5em;
+  margin: 0.5em 0;
 }
-
-/* img */
+a {
+  color: #000;
+  text-decoration: none;
+}
 img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
-
+input[type="text"] {
+  border: 1px solid #ddd;
+  padding: 0.5em;
+}
 .btn {
   cursor: pointer;
   background-color: transparent;
@@ -37,8 +49,7 @@ img {
   border-radius: 4px;
   padding: 0.5em;
 }
-
-.bnt-primary {
+.btn-primary {
   border: 1px solid var(--primary);
   color: var(--primary);
 }
@@ -46,65 +57,13 @@ img {
 .btn-link {
   cursor: pointer;
   border: none;
+  /* background color의 기본값: transparent */
   background-color: transparent;
 }
 
+/* width and height */
 .w-100 {
   width: 100%;
-}
-
-/* grid */
-.grid {
-  display: grid;
-  grid-template-columns: 100px 100px 100px;
-  grid-gap: 2px;
-}
-.grid .item {
-  height: 150px;
-}
-
-/* Carousel */
-.carousel {
-  white-space: nowrap;
-  width: 100%;
-  height: 159px;
-  overflow: hidden;
-}
-.carousel .item {
-  display: inline-block;
-  width: 100%;
-  height: 100%;
-  transition: 0.5s;
-}
-.carousel-btn-group {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.prev,
-.next {
-  display: flex;
-  visibility: hidden;
-  cursor: pointer;
-  padding: 0.5em;
-  border: none;
-  background-color: #fff;
-}
-.carousel-indicator {
-  display: flex;
-  justify-content: center;
-}
-.carousel-indicator {
-  width: 7px;
-  height: 7px;
-  background-color: #ddd;
-  margin: 0 2px;
-  border-radius: 50%;
 }
 
 /* position */
@@ -120,6 +79,74 @@ img {
   bottom: 0;
   width: 100%;
   z-index: 1;
+}
+
+/* font */
+.fs-3 {
+  font-size: 1.17em !important;
+}
+
+/* text */
+.text-center {
+  text-align: center;
+}
+.text-small {
+  font-size: smaller;
+}
+.text-primary {
+  color: var(--primary);
+}
+.text-secondary {
+  color: #888;
+}
+.text-success {
+  color: var(--success);
+}
+.text-danger {
+  color: var(--danger);
+}
+.text-red {
+  color: red;
+}
+/* border */
+.border-top {
+  border-top: 1px solid #ddd;
+}
+.border-bottom {
+  border-bottom: 1px solid #ddd;
+}
+
+/* padding */
+.p-1 {
+  padding: 0.25em;
+}
+.p-2 {
+  padding: 0.5em;
+}
+.p-3 {
+  padding: 1em;
+}
+.pb-1 {
+  padding-bottom: 0.25em;
+}
+.pb-5 {
+  padding-bottom: 3em;
+}
+.px-3 {
+  padding-left: 1em;
+  padding-right: 1em;
+}
+.py-1 {
+  padding-top: 0.25em;
+  padding-bottom: 0.25em;
+}
+.py-2 {
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+}
+.py-3 {
+  padding-top: 1em;
+  padding-bottom: 1em;
 }
 
 /* margin */
@@ -163,93 +190,96 @@ img {
   margin-bottom: 1em;
 }
 
-/* padding */
-.p-1 {
-  padding: 0.25em;
-}
-.p-2 {
-  padding: 0.5em;
-}
-.p-3 {
-  padding: 1em;
-}
-.pb-1 {
-  padding-bottom: 0.25em;
-}
-.pb-5 {
-  padding-bottom: 3em;
-}
-.px-3 {
-  padding-left: 1em;
-  padding-right: 1em;
-}
-.py-1 {
-  padding-top: 0.25em;
-  padding-bottom: 0.25em;
-}
-.py-1 {
-  padding-top: 0.5em;
-  padding-bottom: 0.5em;
-}
-.py-3 {
-  padding-top: 1em;
-  padding-bottom: 1em;
-}
-
-/* border */
-.border-bottom {
-  border-bottom: 1px solid #ddd;
+/* background */
+.bg-white {
+  background-color: #fff;
 }
 
 /* flex */
 .flex {
   display: flex;
 }
-
 .flex-equal > * {
   /* flex item을 선택한다 */
-  /* flex-grow: flex item들이 같은 넓이를 갖고, flex container를 꽉채움 같은 비율로 */
+  /* flex-grow: flex item들이 같은 넓이를 갖게 된다 */
+  /* flex-container를 꽉 채운다 */
   flex-grow: 1;
 }
-
 .justify-content-center {
+  /* flex item의 가운데 정렬 */
   justify-content: center;
 }
-
 .justify-content-between {
+  /* flex item들 사이에 여백 */
   justify-content: space-between;
 }
 .align-center {
+  /* align-items: flex item의 수직정렬 */
   align-items: center;
 }
 
-/* background */
-.bg-white {
-  background-color: white;
+/* grid */
+.grid {
+  display: grid;
+  /* grid-template-columns에서 auto는 열의 갯수  */
+  grid-template-columns: auto auto auto;
+  /* 3열의 grid. grid item의 넓이는 100px; */
+  /* grid-template-columns: 100px 100px 100px; */
+  grid-gap: 2px;
+}
+.grid .item {
+  height: 150px;
 }
 
-/* font */
-.fs-3 {
-  font-size: 1.17em !important;
+/* Carousel */
+.carousel {
+  white-space: nowrap;
+  width: 100%;
+  height: 350px;
+  overflow: hidden;
 }
-
-.text-center {
-  text-align: center;
+.carousel .item {
+  display: inline-block;
+  width: 100%;
+  height: 100%;
+  transition: 0.5s;
 }
-
-.text-small {
-  font-size: smaller;
+.carousel-btn-group {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
-
-.text-secondary {
-  color: #888;
+.prev,
+.next {
+  display: flex;
+  visibility: hidden;
+  cursor: pointer;
+  padding: 0.5em;
+  border: none;
+  background-color: #fff;
 }
-
-.text-danger {
-  color: #dc3545;
+.prev.active,
+.next.active {
+  visibility: visible;
 }
-.text-red {
-  color: red;
+.carousel-indicator {
+  display: flex;
+  justify-content: center;
+}
+.carousel-indicator .dot {
+  width: 7px;
+  height: 7px;
+  background-color: #ddd;
+  margin: 0 2px;
+  border-radius: 50%;
+}
+.carousel-indicator .dot.active {
+  background-color: #888;
 }
 
 /* others */
