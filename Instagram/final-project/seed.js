@@ -152,7 +152,7 @@ async function plantSeeds() {
   console.log("Seeds are successfully planted");
 }
 
-plantSeeds();
+// plantSeeds();
 
 console.log(__dirname);
 

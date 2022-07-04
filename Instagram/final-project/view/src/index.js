@@ -197,9 +197,12 @@ function Home() {
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [articles, setArticles] = useState([]);
+  const [skip, setSkip] = useState(0);
 
   useEffect(() => {
-    fetch(`http://localhost:3000/feed`, {
+    setIsLoaded(false);
+
+    fetch(`http://localhost:3000/feed?skip=${skip}`, {
       headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },
     })
       .then((res) => {
@@ -209,13 +212,14 @@ function Home() {
         return res.json();
       })
       .then((data) => {
-        setArticles(data);
+        // setArticles(data);
+        setArticles([...articles, ...data]);
       })
       .catch((error) => {
         setError(error);
       })
       .finally(() => setIsLoaded(true));
-  }, []);
+  }, [skip]);
 
   console.log(articles);
 
@@ -233,6 +237,14 @@ function Home() {
           <PostItem article={article} isFavorite={article.isFavorite} />
         </div>
       ))}
+
+      {!isLoaded ? (
+        <LoadingInline />
+      ) : (
+        <div className="my-3">
+          {/* <button className="btn w-100" onClick={()} */}
+        </div>
+      )}
     </>
   );
 }
@@ -561,9 +573,12 @@ function Comments() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [comments, setComments] = useState([]);
 
+  const [commentId, setCommentId] = useState(false);
+
   const [dropdownActive, setDropdownActive] = useState(false);
 
   const inputEl = useRef(null);
+  const textAreaE1 = useRef(null);
 
   useEffect(() => {
     fetch(`http://localhost:3000/articles/${postId}/comments`, {
@@ -599,6 +614,8 @@ function Comments() {
         return res.json();
       })
       .then((newComment) => {
+        // 댓글을 추가하고 textarea를 다시 비운다
+        textAreaE1.current.value = "";
         // comments.push(newComment)
         inputEl.current.value = "";
         setComments([...comments, newComment]);
@@ -607,6 +624,12 @@ function Comments() {
   }
 
   function deleteComment(commentId) {
+    let res = window.confirm("삭제하시겠습니까?");
+    if (!res) {
+      setDropdwonActive(false);
+      return;
+    }
+
     fetch(`http://localhost:3000/articles/${postId}/comments/${commentId}`, {
       method: "DELETE",
       headers: { Authorization: "Bearer " + localStorage.getItem("jwt") },
@@ -629,6 +652,13 @@ function Comments() {
   function showDropdown(commentId) {
     console.log(commentId);
     setDropdownActive(true);
+  }
+
+  function handleTextArea() {
+    // line break (줄바꿈)
+    let lb = textAreaE1.current.value.match(/\n/g);
+    // /n의 개수 + 1 만큼 textarea의 rows를 추가한다
+    textAreaE1.current.roews = lb ? lb.length + 1 : 1;
   }
 
   const dropdownContent = (
@@ -656,6 +686,13 @@ function Comments() {
           />
         </div>
         <div className="form-group">
+          <textarea
+            name="content"
+            rows="1"
+            className="w-100"
+            ref={textAreaE1}
+            onChange={handleTextArea}
+          ></textarea>
           <button type="submit" className="btn">
             댓글작성
           </button>
@@ -725,6 +762,8 @@ function Profile() {
   const [articles, setArticles] = useState([]);
 
   useEffect(() => {
+    setIsLoaded(false);
+
     Promise.all([
       fetch(`http://localhost:3000/profiles/${username}`),
       fetch(`http://localhost:3000/profiles/${username}/isFollowing`, {
@@ -1124,6 +1163,16 @@ function Explore() {
           </div>
         ))}
       </div>
+
+      {!isLoaded ? (
+        <LoadingInline />
+      ) : (
+        <div className="my-3">
+          <button className="btn w-100" onClick={() => setSkip(skip + 9)}>
+            더보기
+          </button>
+        </div>
+      )}
     </>
   );
 }
@@ -1607,6 +1656,14 @@ function NotFound() {
       <h1>404 Not Found</h1>
     </>
   );
+}
+
+function Loading() {
+  return <div className="spinner"></div>;
+}
+
+function LoadingInline() {
+  return <div className="spinner-inline"></div>;
 }
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
