@@ -45,7 +45,6 @@ const {
 
 // seed (데이터베이스 초기 데이터 저장)
 const seed = require("./seed.js");
-const { query } = require("express");
 
 // # UserException 클래스
 function UserException(message) {
@@ -281,8 +280,9 @@ app.get("/articles", async (req, res, next) => {
     } else {
       const articles = await Article.find()
         .populate("author")
-        .skip(req, query.skip)
-        .limit(12);
+        .skip(req.query.skip)
+        .limit(9);
+
       res.json(articles);
     }
   } catch (error) {
@@ -464,7 +464,6 @@ app.get("/feed", auth, async (req, res, next) => {
     );
     // 로그인한 유저가 팔로우하는 유저의 게시물
     const articles = await Article.find({ author: followingIds })
-      .find({ author: followingIds })
       .sort([["created", "descending"]])
       .populate("author")
       .skip(req.query.skip)
@@ -481,6 +480,7 @@ app.get("/feed", auth, async (req, res, next) => {
       });
       article.isFavorite = favorite ? true : false;
     }
+
     setTimeout(() => {
       res.json(articles);
     }, 1000);
@@ -673,7 +673,7 @@ app.post("/articles/:postId/comments", auth, async (req, res, next) => {
 
     await comment.save();
 
-    res.json(comment);
+    res.json(await comment.populate("user"));
   } catch (error) {
     next(error);
   }

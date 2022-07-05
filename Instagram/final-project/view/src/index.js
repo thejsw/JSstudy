@@ -169,7 +169,7 @@ function Layout() {
 
       {/* Navigation */}
       <div className="fixed-bottom border-top bg-white">
-        <div className="flex flex-equal py-3">
+        <div className="mx-auto" style={{ maxWidth: "768px" }}>
           <Link to="/" className="text-center">
             <FontAwesomeIcon icon={faHouse} />
           </Link>
@@ -212,7 +212,6 @@ function Home() {
         return res.json();
       })
       .then((data) => {
-        // setArticles(data);
         setArticles([...articles, ...data]);
       })
       .catch((error) => {
@@ -225,9 +224,6 @@ function Home() {
 
   if (error) {
     return <h1>Error!</h1>;
-  }
-  if (!isLoaded) {
-    return <h1>Loading...</h1>;
   }
   return (
     <>
@@ -242,7 +238,9 @@ function Home() {
         <LoadingInline />
       ) : (
         <div className="my-3">
-          {/* <button className="btn w-100" onClick={()} */}
+          <button className="btn w-100" onClick={() => setSkip(skip + 3)}>
+            더보기
+          </button>
         </div>
       )}
     </>
@@ -578,7 +576,7 @@ function Comments() {
   const [dropdownActive, setDropdownActive] = useState(false);
 
   const inputEl = useRef(null);
-  const textAreaE1 = useRef(null);
+  const textAreaEl = useRef(null);
 
   useEffect(() => {
     fetch(`http://localhost:3000/articles/${postId}/comments`, {
@@ -615,9 +613,8 @@ function Comments() {
       })
       .then((newComment) => {
         // 댓글을 추가하고 textarea를 다시 비운다
-        textAreaE1.current.value = "";
-        // comments.push(newComment)
-        inputEl.current.value = "";
+        textAreaEl.current.value = "";
+        textAreaEl.current.rows = 1;
         setComments([...comments, newComment]);
       })
       .catch((error) => alert(error));
@@ -625,8 +622,9 @@ function Comments() {
 
   function deleteComment(commentId) {
     let res = window.confirm("삭제하시겠습니까?");
+
     if (!res) {
-      setDropdwonActive(false);
+      setDropdownActive(false);
       return;
     }
 
@@ -645,6 +643,7 @@ function Comments() {
           (comment) => comment._id !== commentId
         );
         setComments(updatedComments);
+        setDropdownActive(false);
       })
       .catch((error) => alert(error));
   }
@@ -652,17 +651,18 @@ function Comments() {
   function showDropdown(commentId) {
     console.log(commentId);
     setDropdownActive(true);
+    setCommentId(commentId);
   }
 
   function handleTextArea() {
     // line break (줄바꿈)
-    let lb = textAreaE1.current.value.match(/\n/g);
-    // /n의 개수 + 1 만큼 textarea의 rows를 추가한다
-    textAreaE1.current.roews = lb ? lb.length + 1 : 1;
+    let lb = textAreaEl.current.value.match(/\n/g);
+    // /n의 갯수 + 1 만큼 textarea의 rows를 추가한다
+    textAreaEl.current.rows = lb ? lb.length + 1 : 1;
   }
 
   const dropdownContent = (
-    <button className="btn-link" onClick={() => deleteComment(null)}>
+    <button className="btn-link" onClick={() => deleteComment(commentId)}>
       삭제
     </button>
   );
@@ -677,22 +677,15 @@ function Comments() {
     <>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
-          <input
-            type="text"
-            name="content"
-            className="w-100"
-            autoComplete="off"
-            ref={inputEl}
-          />
-        </div>
-        <div className="form-group">
           <textarea
             name="content"
             rows="1"
             className="w-100"
-            ref={textAreaE1}
+            ref={textAreaEl}
             onChange={handleTextArea}
-          ></textarea>
+          />
+        </div>
+        <div className="form-group">
           <button type="submit" className="btn">
             댓글작성
           </button>
@@ -729,7 +722,7 @@ function Comments() {
               </div>
             </div>
             {/* 댓글 내용 */}
-            <p className="">{comment.content}</p>
+            <p className="pre-line">{comment.content}</p>
             <small className="text-secondary">{comment.created}</small>
           </li>
         ))}
@@ -847,7 +840,7 @@ function Profile() {
     return <h1>Error!</h1>;
   }
   if (!isLoaded) {
-    return <h1>Loading...</h1>;
+    return <Loading />;
   }
   return (
     <>
@@ -1124,27 +1117,27 @@ function Explore() {
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [articles, setArticles] = useState([]);
+  const [skip, setSkip] = useState(0);
 
   useEffect(() => {
-    fetch("http://localhost:3000/articles")
+    fetch(`http://localhost:3000/articles?skip=${skip}`)
       .then((res) => {
         if (!res.ok) {
           throw res;
         }
         return res.json();
       })
-      .then((data) => setArticles(data))
+      .then((data) => {
+        setArticles([...articles, ...data]);
+      })
       .catch((error) => setError(error))
       .finally(() => setIsLoaded(true));
-  }, []);
+  }, [skip]);
 
   console.log(articles);
 
   if (error) {
     return <h1>Error!</h1>;
-  }
-  if (!isLoaded) {
-    return <h1>Loading...</h1>;
   }
   return (
     <>
@@ -1650,20 +1643,20 @@ function Dropdown({ active, setActive, content }) {
   );
 }
 
-function NotFound() {
-  return (
-    <>
-      <h1>404 Not Found</h1>
-    </>
-  );
-}
-
 function Loading() {
   return <div className="spinner"></div>;
 }
 
 function LoadingInline() {
   return <div className="spinner-inline"></div>;
+}
+
+function NotFound() {
+  return (
+    <>
+      <h1>404 Not Found</h1>
+    </>
+  );
 }
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
