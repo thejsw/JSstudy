@@ -4,6 +4,7 @@ import React, {
   useRef,
   useContext,
   createContext,
+  useCallback,
 } from "react";
 import ReactDOM from "react-dom/client";
 import {
@@ -40,7 +41,7 @@ function App() {
   console.log("App Loaded!");
 
   return (
-    <div className="mx-auto pb-5 px-3" style={{ maxWidth: "768px" }}>
+    <div className="mx-auto pb-5 py-5 px-3" style={{ maxWidth: "768px" }}>
       <AuthProvider>
         <Router>
           <Routes>
@@ -155,16 +156,38 @@ function Layout() {
   const auth = useContext(AuthContext);
   const location = useLocation();
   const navigate = useNavigate();
+  const headerEl = useRef(null);
+
+  let prevScrollPos = 0;
+
+  window.addEventListener("scroll", handleHeader);
+
+  function handleHeader() {
+    console.log(window.pageYOffset);
+
+    let currentScrollPos = window.pageYOffset;
+
+    console.log("prevScrollPos", prevScrollPos);
+    console.log("currentScrollPos", currentScrollPos);
+
+    if (prevScrollPos >= currentScrollPos) {
+      headerEl.current.style.top = "0px";
+    } else {
+      headerEl, (current.style.top = `-${headerEl.current.offsetHeight}px`);
+    }
+
+    prevScrollPos = currentScrollPos;
+  }
 
   return (
     <>
       {/* Header */}
-      <div className="py-3 border-bottom">
-        <div className="flex justify-content-between">
+      <div className="py-3 border-bottom fixed-top bg-white" ref={headerEl}>
+        <div className="flex justify-content-between px-3 py-3">
           <button className="btn-link" onClick={() => navigate(-1)}>
             &larr; Back
           </button>
-          <div className="fs-3">AnimalFriends</div>
+          <div className="logo fs-3">AnimalFriends</div>
         </div>
       </div>
 
@@ -395,6 +418,25 @@ function PostItem({ article, isFavorite: isFavoriteInitial }) {
         .catch((error) => alert("Error!"));
     }
   }
+
+  // useMemo(function, [dependency])
+  // dependency가 바뀔 때만 Carousel 컴포너트가 렌더링 된다
+  // 불필요한 렌더링을 방지한다
+  const carousel = useMemo(() => {
+    return <Carousel article={article} />;
+  }, [article]);
+
+  // UseCalback(fn, deps)
+  // dependency가 바뀔 대만 컴포너트가 렌더링 된다
+  // 불필요한 렌더링을 방지한다
+  const dropdown = useCallback(
+    <Dropdown
+      active={dropdownActive}
+      setActive={setDropdownActive}
+      content={dropdownContent}
+    />,
+    [dropdownActive]
+  );
 
   const dropdownContent = (
     <ul>

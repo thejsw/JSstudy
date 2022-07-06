@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Lakki+Reddy&display=swap");
+
 /* Intialize */
 :root {
   /* CSS에서 변수를 사용한다 */
@@ -85,6 +87,13 @@ textarea {
   position: fixed;
   left: 0;
   bottom: 0;
+  width: 100%;
+  z-index: 1;
+}
+.fixed-top {
+  position: fixed;
+  left: 0;
+  top: 0;
   width: 100%;
   z-index: 1;
 }
@@ -322,6 +331,9 @@ textarea {
   height: 25px;
   border-radius: 50%;
   overflow: hidden;
+}
+.logo {
+  font-family: "Lakki Reddy", cursive;
 }
 
 /* dropdown */
