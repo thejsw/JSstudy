@@ -1,7 +1,7 @@
-import Say from "./study/ch3_Say";
+import EventPractice from "./study/ch4_EventPractice";
 
 const App = () => {
-  return <Say></Say>;
+  return <EventPractice />;
 };
 
 export default App;
