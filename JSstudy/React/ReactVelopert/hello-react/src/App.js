@@ -1,7 +1,10 @@
-import Say from "./study/ch3_Say";
+import { Component } from "react";
+import ValidationSample from "./study/ch5_ValidationSample.js";
 
-const App = () => {
-  return <Say></Say>;
-};
+class App extends Component {
+  render() {
+    return <ValidationSample />;
+  }
+}
 
 export default App;
