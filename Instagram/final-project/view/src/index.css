@@ -1,38 +1,86 @@
+/* Intialize */
 :root {
-  --primary: #046efd;
+  /* CSS에서 변수를 사용한다 */
+  /* 변수명: 변수 값 */
+  --primary: #0d6efd;
+  --success: #28a745;
   --danger: #dc3545;
 }
-
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
-
 body {
-  font-size: 16px;
-}
+  /* 기본값 */
+  /* font-size: normal; */
+  /* font-size: 16px; */
 
-/* img */
+  /* 전체적으로 font-size가 줄어든다 */
+  font-size: smaller;
+  /* font-size: 13.3333px */
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+p {
+  margin: 0.5em 0;
+}
+a {
+  color: #000;
+  text-decoration: none;
+}
+ul {
+  list-style-type: none;
+}
 img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
+input[type="text"] {
+  border: 1px solid #ddd;
+  padding: 0.5em;
+}
+textarea {
+  outline: none;
+  border: none;
+  border-bottom: 1px solid #ddd;
+}
+.btn {
+  cursor: pointer;
+  background-color: transparent;
+  border: 1px solid #000;
+  text-align: center;
+  border-radius: 4px;
+  padding: 0.5em;
+}
+.btn-primary {
+  border: 1px solid var(--primary);
+  color: var(--primary);
+}
 
 .btn-link {
   cursor: pointer;
   border: none;
+  /* background color의 기본값: transparent */
   background-color: transparent;
 }
 
-/* grid */
-.grid {
-  display: grid;
-  grid-template-columns: 100px 100px 100px;
+/* width and height */
+.w-100 {
+  width: 100%;
 }
 
 /* position */
+.relative {
+  position: relative;
+}
+.absolute {
+  position: absolute;
+}
 .fixed-bottom {
   position: fixed;
   left: 0;
@@ -41,79 +89,310 @@ img {
   z-index: 1;
 }
 
-/* margin */
-.mx-auto {
-  margin: auto;
+/* font */
+.fs-3 {
+  font-size: 1.17em !important;
 }
 
-.mt-3 {
-  margin-top: 1em;
+/* text */
+.text-center {
+  text-align: center;
+}
+.text-small {
+  font-size: smaller;
+}
+.text-primary {
+  color: var(--primary);
+}
+.text-secondary {
+  color: #888;
+}
+.text-success {
+  color: var(--success);
+}
+.text-danger {
+  color: var(--danger);
+}
+.text-red {
+  color: red;
+}
+/* white-space */
+.pre-line {
+  /* default */
+  /* white-space: normal */
+  /* white-space: nowrap; */
+  /* white-space: pre; */
+  /* white-space: pre-wrap; */
+  white-space: pre-line;
+}
+
+/* border */
+.border-top {
+  border-top: 1px solid #ddd;
+}
+.border-bottom {
+  border-bottom: 1px solid #ddd;
 }
 
 /* padding */
-.PY-3 {
+.p-1 {
+  padding: 0.25em;
+}
+.p-2 {
+  padding: 0.5em;
+}
+.p-3 {
+  padding: 1em;
+}
+.pb-1 {
+  padding-bottom: 0.25em;
+}
+.pb-5 {
+  padding-bottom: 3em;
+}
+.px-3 {
+  padding-left: 1em;
+  padding-right: 1em;
+}
+.py-1 {
+  padding-top: 0.25em;
+  padding-bottom: 0.25em;
+}
+.py-2 {
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+}
+.py-3 {
   padding-top: 1em;
   padding-bottom: 1em;
 }
 
-.pb-5 {
-  padding-bottom: 3em;
+/* margin */
+.mx-auto {
+  margin: auto;
+}
+.mt-1 {
+  margin-top: 0.25em;
+}
+.mt-2 {
+  margin-top: 0.5em;
+}
+.mt-3 {
+  margin-top: 1em;
+}
+.ms-1 {
+  margin-left: 0.25em;
+}
+.ms-2 {
+  margin-left: 0.5em;
+}
+.ms-3 {
+  margin-left: 1em;
+}
+.ms-4 {
+  margin-left: 1.5em;
+}
+.ms-5 {
+  margin-left: 3em;
+}
+.my-1 {
+  margin-top: 0.25em;
+  margin-bottom: 0.25em;
+}
+.my-2 {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+.my-3 {
+  margin-top: 1em;
+  margin-bottom: 1em;
 }
 
-/* border */
-.border-bottom {
-  border-bottom: 1px solid #ddd;
+/* background */
+.bg-white {
+  background-color: #fff;
 }
 
 /* flex */
 .flex {
   display: flex;
 }
-
 .flex-equal > * {
   /* flex item을 선택한다 */
-  /* flex-grow: flex item들이 같은 넓이를 갖고, flex container를 꽉채움 같은 비율로 */
-  flex-grow: 1; 
+  /* flex-grow: flex item들이 같은 넓이를 갖게 된다 */
+  /* flex-container를 꽉 채운다 */
+  flex-grow: 1;
 }
-
 .justify-content-center {
+  /* flex item의 가운데 정렬 */
   justify-content: center;
 }
-
 .justify-content-between {
+  /* flex item들 사이에 여백 */
   justify-content: space-between;
 }
-
-/* background */
-.bg-white {
-  background-color: white;
+.align-center {
+  /* align-items: flex item의 수직정렬 */
+  align-items: center;
 }
 
-/* font */
-.fs-3 {
-  font-size: 1.17em!important;
+/* grid */
+.grid {
+  display: grid;
+  /* grid-template-columns에서 auto는 열의 갯수  */
+  grid-template-columns: auto auto auto;
+  /* 3열의 grid. grid item의 넓이는 100px; */
+  /* grid-template-columns: 100px 100px 100px; */
+  grid-gap: 2px;
+}
+.grid .item {
+  height: 150px;
 }
 
-.text-center {
-  text-align: center;
+/* Carousel */
+.carousel {
+  white-space: nowrap;
+  width: 100%;
+  height: 350px;
+  overflow: hidden;
 }
-
-.text-small {
-  font-size: smaller;
+.carousel .item {
+  display: inline-block;
+  width: 100%;
+  height: 100%;
+  transition: 0.5s;
 }
-
-.text-secondary {
-  color: #888;
+.carousel-btn-group {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
-
-.text-danger {
-  color: #dc3545;
+.prev,
+.next {
+  display: flex;
+  visibility: hidden;
+  cursor: pointer;
+  padding: 0.5em;
+  border: none;
+  background-color: #fff;
+}
+.prev.active,
+.next.active {
+  visibility: visible;
+}
+.carousel-indicator {
+  display: flex;
+  justify-content: center;
+}
+.carousel-indicator .dot {
+  width: 7px;
+  height: 7px;
+  background-color: #ddd;
+  margin: 0 2px;
+  border-radius: 50%;
+}
+.carousel-indicator .dot.active {
+  background-color: #888;
 }
 
 /* others */
+.form-group {
+  margin: 0.5em 0;
+}
 .profile-image {
   width: 150px;
   height: 150px;
   border-radius: 50%;
   overflow: hidden;
+}
+.avatar {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+/* dropdown */
+.modal {
+  background-color: rgba(0, 0, 0, 0.5);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+  display: none;
+}
+.dropdown {
+  background-color: #fff;
+  position: fixed;
+  width: 100%;
+  left: 0;
+  bottom: 0;
+  transition: 0.5s;
+  border-radius: 25px 25px 0 0;
+  z-index: 10;
+}
+.modal.active {
+  display: block;
+}
+
+.spinner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+  /* background-color: rgba(0,0,0,0.5); */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.spinner::after {
+  content: "";
+  border: 8px solid #ddd;
+  border-top: 8px solid var(--primary);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+
+  animation: spin;
+  animation-duration: 1.5s;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+
+.spinner-inline {
+  display: flex;
+  justify-content: center;
+  padding: 1em 0;
+}
+
+.spinner-inline::after {
+  content: "";
+  border: 4px solid #ddd;
+  border-top: 4px solid var(--primary);
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  animation: spin;
+  animation-duration: 1s;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
