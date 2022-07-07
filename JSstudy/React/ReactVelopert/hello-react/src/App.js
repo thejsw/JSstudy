@@ -1,9 +1,9 @@
 import { Component } from "react";
-import ValidationSample from "./study/ch5_ValidationSample.js";
+import IterationSample from "./study/ch6_IterationSample.js";
 
 class App extends Component {
   render() {
-    return <ValidationSample />;
+    return <IterationSample />;
   }
 }
 
