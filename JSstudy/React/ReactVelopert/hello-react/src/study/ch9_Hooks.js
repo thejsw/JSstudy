@@ -1,37 +1,43 @@
-import { useState, useEffect } from "react";
+import { useState, useMemo } from "react";
 
-const Info = () => {
-  const [name, setName] = useState("");
-  const [nickname, setNickname] = useState("");
+const getAverage = (numbers) => {
+  console.log("평균값 계산중 ...");
 
-  useEffect(() => {
-    console.log("렌더링이 완료되었습니다");
-    console.log({
-      name,
-      nickname,
-    });
-  }, [name]);
+  if (numbers.length === 0) return 0;
+  const sum = numbers.reduce((a, b) => a + b);
+  return sum / numbers.length;
+};
+const Average = () => {
+  const [list, setList] = useState([]);
+  const [number, setNumber] = useState("");
 
-  const onChangeName = (e) => {
-    setName(e.target.value);
+  const onChange = (e) => {
+    setNumber(e.target.value);
   };
-  const onChangeNickname = (e) => {
-    setNickname(e.target.value);
+  const onInsert = (e) => {
+    const nextList = list.concat(parseInt(number));
+    setList(nextList);
+    setNumber("");
   };
+
+  const avg = useMemo(() => getAverage(list), [list]);
 
   return (
     <div>
       <div>
-        <input vlaue={name} onChange={onChangeName} />
-        <input vlaue={nickname} onChange={onChangeNickname} />
+        <input value={number} onChange={onChange} />
+        <button onClick={onInsert}>계산</button>
       </div>
+      <ul>
+        {list.map((value, index) => (
+          <li key={index}>{value}</li>
+        ))}
+      </ul>
       <div>
-        이름: <b>{name}</b>
-        <br />
-        닉네임: <b>{nickname}</b>
+        <b>평균값: {avg}</b>
       </div>
     </div>
   );
 };
 
-export default Info;
+export default Average;

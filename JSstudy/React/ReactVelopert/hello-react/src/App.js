@@ -1,7 +1,7 @@
-import Info from "./study/ch9_Hooks";
+import Average from "./study/ch9_Hooks";
 
 const App = () => {
-  return <Info />;
+  return <Average />;
 };
 
 export default App;
