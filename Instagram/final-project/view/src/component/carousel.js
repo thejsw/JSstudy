@@ -1,11 +1,12 @@
 import { useState, useEffect, useRef } from "react";
 
-export default function Carousel() {
-  console.log("Carousel loaded");
-  console.log(article);
+export default function Carousel({ article }) {
+  console.log("Carousel Loaded!");
 
+  // state
   const [index, setIndex] = useState(0);
 
+  // ref
   const prevBtn = useRef(null);
   const nextBtn = useRef(null);
 
@@ -14,21 +15,17 @@ export default function Carousel() {
   function setItem(item) {
     items.push(item);
   }
-
   function setIndicator(indicator) {
     indicators.push(indicator);
   }
 
+  // state로 관리하지 않아도 되는 변수
   let isDragging = false;
   let point = 0;
   let move = 0;
 
-  useEffect(() => {
-    navigateTo(index);
-  });
-
   // 처음에 손가락으로 Carousel을 터치했을 때
-  function start() {
+  function start(e) {
     isDragging = true;
     point = e.pageX;
   }
@@ -43,7 +40,7 @@ export default function Carousel() {
     console.log(move);
   }
 
-  // 손가락을 Carousel로부터 뗐을 때
+  // 손가락을 Carousel로부터 떼었을 때
   function end() {
     isDragging = false;
 
@@ -51,7 +48,7 @@ export default function Carousel() {
       setIndex(index + 1);
       return;
     }
-    if (move < 50 && index > 0) {
+    if (move < -50 && index > 0) {
       setIndex(index - 1);
       return;
     }
@@ -75,6 +72,7 @@ export default function Carousel() {
     indicators.map((indicator) => {
       indicator.classList.remove("active");
     });
+
     indicators[index].classList.add("active");
   }
 
@@ -82,11 +80,11 @@ export default function Carousel() {
     <>
       <div className="relative">
         <div className="carousel">
-          {article.photos.map((photo, index) => {
+          {article.photos.map((photo, index) => (
             <div key={index} className="item" ref={setItem}>
-              <img src={`http://localhost:3000/posts/${photo}`}></img>
-            </div>;
-          })}
+              <img src={`http://localhost:3000/posts/${photo}`} />
+            </div>
+          ))}
         </div>
         <div
           className="carousel-btn-group"
@@ -96,23 +94,25 @@ export default function Carousel() {
           onMouseLeave={end}
         >
           <button
-            className="carousel-btn-group"
+            className="carousel-btn prev"
             onClick={() => setIndex(index - 1)}
+            ref={prevBtn}
           >
             &#10094;
           </button>
           <button
-            className="carousel-btn-group"
+            className="carousel-btn next"
             onClick={() => setIndex(index + 1)}
+            ref={nextBtn}
           >
             &#10094;
           </button>
         </div>
       </div>
       <div className="carousel-indicator my-2">
-        {article.photos.map((photo, index) => {
-          <span className="dot" key={index} ref={setIndicator} />;
-        })}
+        {article.photos.map((photo, index) => (
+          <span className="dot" key={index} ref={setIndicator}></span>
+        ))}
       </div>
     </>
   );
