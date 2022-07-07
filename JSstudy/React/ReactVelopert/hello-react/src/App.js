@@ -1,9 +1,28 @@
 import { Component } from "react";
-import IterationSample from "./study/ch6_IterationSample.js";
+import LifeCycleSample from "./study/ch7_LifeCycleSample";
+
+function getRandomColor() {
+  return "#" + Math.floor(Math.random() * 16777215).toString(16);
+}
 
 class App extends Component {
+  state = {
+    color: "#000000",
+  };
+
+  handleClick = () => {
+    this.setState({
+      color: getRandomColor(),
+    });
+  };
+
   render() {
-    return <IterationSample />;
+    return (
+      <div>
+        <button onClick={this.handleClick}>랜덤 색상</button>
+        <LifeCycleSample color={this.state.color} />
+      </div>
+    );
   }
 }
 
