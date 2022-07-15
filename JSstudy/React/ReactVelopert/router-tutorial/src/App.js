@@ -5,6 +5,8 @@ import About from "./pages/About";
 import Profile from "./pages/Profile";
 import Articles from "./pages/Articles";
 import Article from "./pages/Article";
+import Login from "./pages/Login";
+import MyPage from "./pages/MyPage";
 import NotFound from "./pages/NotFound";
 
 const App = () => {
@@ -18,6 +20,8 @@ const App = () => {
       <Route path="/articles" element={<Articles />}>
         <Route path=":id" element={<Article />} />
       </Route>
+      <Route path="/login" element={<Login />} />
+      <Route path="/mypage" element={<MyPage />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
