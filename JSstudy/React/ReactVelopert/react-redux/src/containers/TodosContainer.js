@@ -1,3 +1,4 @@
+import React from 'react';
 import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { changeInput, insert, toggle, remove } from '../modules/todos';
@@ -9,7 +10,7 @@ const TodosContainer = () => {
     input: todos.input,
     todos: todos.todos,
   }));
-  // 액션 실행(디스패치)를 위한 useDispatch
+  // 액션 실행(디스패치)를 위한 useDispatch / useCallback을 이용한 디스패치 성능 최적화
   const dispatch = useDispatch();
   const onChangeInput = useCallback(
     (input) => dispatch(changeInput(input)),
@@ -32,4 +33,5 @@ const TodosContainer = () => {
   );
 };
 
-export default TodosContainer;
+// 부모 컴포넌트가 리렌더링 시에 성능 최적화를 위한 React.memo
+export default React.memo(TodosContainer);
