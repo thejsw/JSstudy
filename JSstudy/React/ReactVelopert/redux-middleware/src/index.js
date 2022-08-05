@@ -4,9 +4,9 @@ import { Provider } from "react-redux";
 import "./index.css";
 import App from "./App";
 import rootReducer from "./modules";
-import loggerMiddle from "./lib/loggerMiddle";
+import ReduxThunk from "redux-thunk";
 
-const store = configureStore(rootReducer, applyMiddleware(loggerMiddle));
+const store = configureStore(rootReducer, applyMiddleware(ReduxThunk));
 
 ReactDOM.render(
   <Provider store={store}>
