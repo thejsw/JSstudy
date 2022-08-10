@@ -1,7 +1,6 @@
 // import React, { useState } from 'react';
 import logo from "./logo.svg";
 import "./App.css";
-import notify from "./notify";
 // import loadable from '@loadable/component';
 // const SplitMe = loadable(() => import('./SplitMe'), {
 //   fallback: <div>loading...</div>
@@ -9,7 +8,7 @@ import notify from "./notify";
 
 function App() {
   const onClick = () => {
-    notify();
+    import("./notify").then((result) => result.default());
   };
   // const [visible, setVisible] = useState(false);
   // const onClick = () => {
