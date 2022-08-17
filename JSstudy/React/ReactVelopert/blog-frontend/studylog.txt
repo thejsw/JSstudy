@@ -1,3 +1,4 @@
 1. React 프로젝트 생성 (yarn create react-app blog-frontend)
 2. 설정 파일 만들기 (.prettierrc-코드 스타일 정리, jsconfig.json-자동import기능)
 3. 라우터 적용 (yarn add react-router-dom, 라우트 컴포넌트 생성, index.js에서 BrowserRouter로 App 감싸기, App.js에서 라우트 경로 지정하기)
+4. 스타일 설정 (yarn add styled-components, palette.js 생성, 컴포넌트 스타일 설정-버튼, 글로벌 스타일 수정)
