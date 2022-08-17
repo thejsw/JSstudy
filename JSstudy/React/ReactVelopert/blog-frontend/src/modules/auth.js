@@ -9,10 +9,10 @@ export const changeField = createAction(
   ({ form, key, value }) => ({
     form,
     key,
-    value
+    value,
   }),
-  );
-export const initializeForm = createAction(INITIALIZE_FORM, form => form)
+);
+export const initializeForm = createAction(INITIALIZE_FORM, (form) => form);
 
 const initialState = {
   register: {
@@ -28,11 +28,11 @@ const initialState = {
 
 const auth = handleActions(
   {
-    [CHANGE_FIELD]: (state, {payload: { payload: {form, key, value} }}) => 
-      produce(state, draft => {
-        draft[form][key] = value // ex) state.register.username
+    [CHANGE_FIELD]: (state, { payload: { form, key, value } }) =>
+      produce(state, (draft) => {
+        draft[form][key] = value; // ex) state.register.username
       }),
-    [INITIALIZE_FORM]: (state, {payload: form}) => ({
+    [INITIALIZE_FORM]: (state, { payload: form }) => ({
       ...state,
       [form]: initialState[form],
     }),
