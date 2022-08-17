@@ -5,4 +5,4 @@
 5. 리덕스 설정 (yarn add redux react-redux redux-actions immer redux-devtools-extension, 리덕스 모듈 작성, 루트 리듀서 생성, 스토어 생성, Provider로 적용)
 
 6. UI준비 (snippet 설정, 컴포넌트 생성-auth,common,base)
-7. 로그인/회원가입 (컴포넌트 생성(AuthForm, AuthTemplate))
+7. 로그인/회원가입 (컴포넌트 생성(AuthForm, AuthTemplate), 리덕스로 폼 상태관리(auth), )
