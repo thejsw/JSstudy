@@ -9,14 +9,14 @@ const MyComponent = (props) => {
             저는 {children}입니다.
         </div>
     )
+}
 
-    MyComponent.defaultProps = {
-        name: '기본 이름'
-    }
+MyComponent.defaultProps = {
+    name: '기본 이름'
+}
 
-    MyComponent.PropTypes = {
-        name: PropTypes.string.isRequired
-    }
+MyComponent.propTypes = {
+    name: PropTypes.string.isRequired
 }
 
 export default MyComponent
